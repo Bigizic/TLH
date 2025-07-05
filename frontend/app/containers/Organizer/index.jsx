@@ -24,6 +24,9 @@ import EditEvent from "../../components/Manager/Event/Edit";
 import AddTicket from '../../components/Manager/Ticket/Add';
 import EditTicket from '../../components/Manager/Ticket/Edit';
 
+import AddCoupon from '../../components/Manager/Coupons/Add';
+import EditCoupon from '../../components/Manager/Coupons/Edit';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@coreui/coreui/dist/css/coreui.min.css';
 
@@ -48,8 +51,8 @@ const Organizer = (props) => {
           <Route path='events/edit/:id' element={<EditEvent {...props}/>} />
           <Route path='tickets/add' element={<AddTicket {...props}/>} />
           <Route path='tickets/edit/:id' element={<EditTicket {...props}/>} />
-          {/*<Route path='coupons/add' element={<AddCoupon {...props}/>} />
-          <Route path='coupons/edit/:id' element={<EditCoupon {...props}/>} />*/}
+          <Route path='coupons/add' element={<AddCoupon {...props}/>} />
+          <Route path='coupons/edit/:id' element={<EditCoupon {...props}/>} />
           <Route path='*' element={<Page404 />} />
         </Routes>
       </div>

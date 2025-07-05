@@ -7,6 +7,7 @@ import login from './containers/Login/reducer';
 import navigation from './containers/Navigation/reducer';
 import event from './containers/Events/reducer';
 import ticket from './containers/Ticket/reducer';
+import coupon from './containers/Coupon/reducer';
 
 const rootReducer = combineReducers({
   account,
@@ -16,6 +17,7 @@ const rootReducer = combineReducers({
   login,
   navigation,
   event,
-  ticket
+  ticket,
+  coupon
 });
 export default rootReducer;
