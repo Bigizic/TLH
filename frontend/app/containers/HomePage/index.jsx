@@ -20,7 +20,7 @@ const event3 = "./assets/events/event_3.jpeg";
 const event4 = "./assets/events/event_4.jpeg";
 
 class Home extends React.PureComponent {
-  componentWillMount() {
+  componentDidMount() {
     this.props.fetchHomeMedia();
   }
   render () {

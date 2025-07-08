@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { withRouter } from '../../withRouter';
 import actions from '../../actions';
@@ -27,6 +26,13 @@ const EventViewer = (props) => {
     )
   }
 
+  // Helper to determine if the URL is a video
+  const isVideo = (url) => {
+      const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
+      const lowerCaseUrl = url.toLowerCase();
+      return videoExtensions.some(ext => lowerCaseUrl.endsWith(ext));
+  };
+
   if (isEventSelect) {
  return (
     <div style={{ paddingTop: '10em' }} className="event-view bg-white">
@@ -46,7 +52,14 @@ const EventViewer = (props) => {
             >
               {event && event.imageUrls?.map((url, idx) => (
                 <div key={idx} className="event-image-wrapper">
-                  <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
+                  {isVideo(url) ? (
+                    <video controls muted playsInline className="event-image">
+                      <source src={`${API_URL}${url}`} type="video/mp4"></source>
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
+                  )}
                 </div>
               ))}
             </FadeSlider>
@@ -109,7 +122,14 @@ const EventViewer = (props) => {
             >
               {event && event.imageUrls?.map((url, idx) => (
                 <div key={idx} className="event-image-wrapper">
-                  <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
+                  {isVideo(url) ? (
+                    <video controls muted playsInline className="event-image">
+                      <source src={`${API_URL}${url}`} type="video/mp4"></source>
+                      Your browser does not support the video tag.
+                    </video>
+                  ) : (
+                    <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
+                  )}
                 </div>
               ))}
             </FadeSlider>
