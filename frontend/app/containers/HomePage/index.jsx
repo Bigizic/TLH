@@ -46,7 +46,6 @@ class Home extends React.PureComponent {
       })
       .map(media => API_URL + media.mediaUrl);
   }
-  console.log(images, video)
 
   return (
     <>
