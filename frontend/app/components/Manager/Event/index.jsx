@@ -16,6 +16,7 @@ import ResolveImage from '../../store/ResolveImage';
 import { ROLES, API_URL } from '../../../constants';
 import { useNavigate, Link } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
+import Input from '../../Common/HtmlTags/Input';
 import { withRouter } from '../../../withRouter';
 import actions from '../../../actions';
 import { connect } from 'react-redux';
@@ -45,13 +46,24 @@ const ManagerEventHelper = (props) => {
   } = props;
   const navigate = useNavigate();
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const eventsPerPage = 10;
 
-  const totalPages = Math.ceil(events.length / eventsPerPage);
+  // Filter events based on search term
+  const filteredEvents = events.filter(event => 
+    event.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const totalPages = Math.ceil(filteredEvents.length / eventsPerPage);
   const startIndex = (currentPage - 1) * eventsPerPage;
   const endIndex = startIndex + eventsPerPage;
-  const currentEvents = events.slice(startIndex, endIndex);
+  const currentEvents = filteredEvents.slice(startIndex, endIndex);
   const stats = statsFunc(events);
+
+  const handleSearch = (name, value) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
     <div data-aos='fade-up' className='container-lg px-4 d-flex flex-column mb-custom-5em'>
@@ -65,6 +77,18 @@ const ManagerEventHelper = (props) => {
         <Button onClick={() => navigate("/dashboard/events/my-events")} cls={`${isLightMode ? 'bg-white p-black': 'bg-black p-white'} align-self-end`} type={"third-btn"} text={"My Events"}/>
       }
       <hr className={`${isLightMode ? 'p-black' : 'p-white'}`} />
+      
+      {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search events by name..."
+          name="searchEvents"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
+      
       <div>
 
         {/* Event Stats Summary */}
@@ -112,50 +136,58 @@ const ManagerEventHelper = (props) => {
           </CCol>
         </CRow>
 
-        {/* Event List */}
-        <CRow className='gy-4'>
-          {currentEvents.map((event, idx) => (
-            <CCol md={6} key={idx}>
-              <Link to={`/dashboard/events/edit/${event._id}`}>
-                <CCard style={{ height: '95%' }} className={`${isLightMode ? 'bg-white p-black' : 'bg-black p-white border'} flex-row overflow-hidden`}>
-                  <CImage
-                    src={ResolveImage(event.imageUrls && event.imageUrls[0] ? `${API_URL}${event.imageUrls[0]}` : '')}
-                    alt={event.title}
-                    style={{ width: '40%', objectFit: 'cover' }}
-                  />
-                  <CCardBody>
-                    <CCardTitle className='mb-2'>{event.name}</CCardTitle>
-                    <CBadge color={ event.status === 'Ended'
-                                    ? 'danger'
-                                    : event.status === 'Upcoming'
-                                    ? 'primary'
-                                    : event.status === 'Ongoing'
-                                    ? 'success'
-                                    : 'secondary'
-                                  }
-                    >
-                      {event.status}
-                    </CBadge>
-                    <CCardText className='mt-2'>
-                      <strong>Start Date:</strong> {formatDate(event.startDate)}<br />
-                      <strong>End Date:</strong> {formatDate(event.endDate)}<br />
-                      <strong>Venue:</strong> {event.location}<br />
-                      <strong>Tickets Sold:</strong> {event.attendees || 0}<br />
-                      { event.user.organizer && <strong>Created By: {event.user.organizer.companyName}</strong> }
-                    </CCardText>
-                  </CCardBody>
-                </CCard>
-              </Link>
-            </CCol>
-          ))}
-        </CRow>
+        {currentEvents.length > 0 ? (
+          /* Event List */
+          <CRow className='gy-4'>
+            {currentEvents.map((event, idx) => (
+              <CCol md={6} key={idx}>
+                <Link to={`/dashboard/events/edit/${event._id}`}>
+                  <CCard style={{ height: '95%' }} className={`${isLightMode ? 'bg-white p-black' : 'bg-black p-white border'} flex-row overflow-hidden`}>
+                    <CImage
+                      src={ResolveImage(event.imageUrls && event.imageUrls[0] ? `${API_URL}${event.imageUrls[0]}` : '')}
+                      alt={event.title}
+                      style={{ width: '40%', objectFit: 'cover' }}
+                    />
+                    <CCardBody>
+                      <CCardTitle className='mb-2'>{event.name}</CCardTitle>
+                      <CBadge color={ event.status === 'Ended'
+                                      ? 'danger'
+                                      : event.status === 'Upcoming'
+                                      ? 'primary'
+                                      : event.status === 'Ongoing'
+                                      ? 'success'
+                                      : 'secondary'
+                                    }
+                      >
+                        {event.status}
+                      </CBadge>
+                      <CCardText className='mt-2'>
+                        <strong>Start Date:</strong> {formatDate(event.startDate)}<br />
+                        <strong>End Date:</strong> {formatDate(event.endDate)}<br />
+                        <strong>Venue:</strong> {event.location}<br />
+                        <strong>Tickets Sold:</strong> {event.attendees || 0}<br />
+                        { event.user.organizer && <strong>Created By: {event.user.organizer.companyName}</strong> }
+                      </CCardText>
+                    </CCardBody>
+                  </CCard>
+                </Link>
+              </CCol>
+            ))}
+          </CRow>
+        ) : (
+          <div className={`text-center py-5 ${isLightMode ? 'p-black' : 'p-white'}`}>
+            <h3>No events found</h3>
+            <p>Try adjusting your search criteria</p>
+          </div>
+        )}
 
         <ManagerPagination
           isLightMode={isLightMode}
-          data={events}
+          data={filteredEvents}
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
+          onPageChange={setCurrentPage}
         />
       </div>
     </div>

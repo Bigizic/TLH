@@ -21,6 +21,7 @@ const initialState = {
   ticketForm: {
     type: '',
     price: '',
+    quantity: '',
     discount: false,
     discountPrice: '',
     coupons: []
@@ -50,6 +51,7 @@ const ticketReducer = (state = initialState, action) => {
           ticketForm: {
             type: '',
             price: '',
+            quantity: '',
             discount: false,
             discountPrice: '',
             coupons: []

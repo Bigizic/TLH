@@ -82,14 +82,16 @@ const EventViewer = (props) => {
                         {!ticket.discount && 
                         <div className='d-flex flex-column'>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                          <span className='font-size-15'>₦{ticket.price}</span>
+                          <span className='font-size-15'>₦{ticket.price}</span><br /> 
+                          <span>{ticket.quantity} Remaining</span>
                         </div>
                         }
                         {ticket.discount && ticket.discountPrice && (
                           <div style={{ position: 'relative' }}>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                             <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                            <span className="font-size-20">₦{ticket.discountPrice}</span>
+                            <span className="font-size-20">₦{ticket.discountPrice}</span><br />
+                            <span>{ticket.quantity} Remaining</span>
                           </div>
                         )}
                         <MdOutlineAddShoppingCart size={30}/>
@@ -151,14 +153,16 @@ const EventViewer = (props) => {
                         {!ticket.discount && 
                         <div className='d-flex flex-column'>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                          <span className='font-size-15'>₦{ticket.price}</span>
+                          <span className='font-size-15'>₦{ticket.price}</span>< br/>
+                          <span>{ticket.quantity} Remaining</span>
                         </div>
                         }
                         {ticket.discount && ticket.discountPrice && (
                           <div style={{ position: 'relative' }}>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                             <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                            <span className="font-size-20">₦{ticket.discountPrice}</span>
+                            <span className="font-size-20">₦{ticket.discountPrice}</span><br />
+                            <span>{ticket.quantity} Remaining</span>
                           </div>
                         )}
                         <MdOutlineAddShoppingCart size={30}/>

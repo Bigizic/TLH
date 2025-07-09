@@ -5,10 +5,21 @@ import {
 } from '@coreui/react';
 
 const ManagerPagination = (props) => {
-    const { isLightMode, data,
-            totalPages, startIndex,
-            endIndex } = props;
+    const { 
+      isLightMode, 
+      data,
+      totalPages, 
+      startIndex,
+      endIndex,
+      onPageChange = () => {} 
+    } = props;
     const [currentPage, setCurrentPage] = useState(1);
+    
+    const handlePageChange = (page) => {
+      setCurrentPage(page);
+      onPageChange(page);
+    }
+    
     return (
         <div className='mt-4'>
           <div className='w-100 d-flex justify-content-center align-items-center mb-3'>
@@ -24,7 +35,7 @@ const ManagerPagination = (props) => {
                 key={index + 1}
                 active={index + 1 === currentPage}
                 onClick={() => {
-                  setCurrentPage(index + 1);
+                  handlePageChange(index + 1);
                   window.scrollTo({ top: 0, behavior: 'smooth' });
                 }}
                 style={{ cursor: 'pointer' }}

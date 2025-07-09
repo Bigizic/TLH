@@ -16,6 +16,7 @@ import { useState } from 'react';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Button from '../../Common/HtmlTags/Button';
 import ResolveImage from '../../store/ResolveImage';
+import Input from '../../Common/HtmlTags/Input';
 import { ROLES } from '../../../constants';
 import { useNavigate, Link } from 'react-router-dom';
 import { withRouter } from '../../../withRouter';
@@ -27,12 +28,19 @@ const ManagerCouponHelper = (props) => {
   const { user, isLightMode, coupons = [] } = props;
   const navigate = useNavigate();
   const [visibleCodes, setVisibleCodes] = useState({});
+  const [searchTerm, setSearchTerm] = useState('');
 
   const toggleCodeVisibility = (idx) => {
     setVisibleCodes((prev) => ({ ...prev, [idx]: !prev[idx] }));
   };
 
-  const mostUsedCoupon = coupons.length > 0 
+  // Filter coupons based on search term
+  const filteredCoupons = coupons.filter(coupon => 
+    coupon.code?.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    coupon.percentage?.toString().includes(searchTerm)
+  );
+
+  const mostUsedCoupon = filteredCoupons.length > 0 
     ? coupons.reduce((prev, curr) => curr.usedCount > prev.usedCount ? curr : prev)
     : { code: 'N/A', usedCount: 0 };
   const activeCount = coupons.filter(c => c.active).length;
@@ -41,10 +49,15 @@ const ManagerCouponHelper = (props) => {
   const [currentPage, setCurrentPage] = useState(1);
   const couponsPerPage = 10;
 
-  const totalPages = Math.ceil(coupons.length / couponsPerPage);
+  const totalPages = Math.ceil(filteredCoupons.length / couponsPerPage);
   const startIndex = (currentPage - 1) * couponsPerPage;
   const endIndex = startIndex + couponsPerPage;
-  const currentCoupons = coupons.slice(startIndex, endIndex);
+  const currentCoupons = filteredCoupons.slice(startIndex, endIndex);
+
+  const handleSearch = (name, value) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
     <div data-aos="fade-up" className='container-lg px-4 d-flex flex-column mb-custom-5em'>
@@ -57,6 +70,17 @@ const ManagerCouponHelper = (props) => {
         <Button onClick={() => navigate("/dashboard/coupons/my-coupons")} cls={`${isLightMode ? 'bg-white p-black': 'bg-black p-white'} align-self-end`} type={"third-btn"} text={"My Coupons"}/>
       }
       <hr className={`${isLightMode ? 'p-black': 'p-white'}`}></hr>
+
+      {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search coupons by code or percentage..."
+          name="searchCoupons"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
 
       {/* Coupon Stats */}
       <CRow className="mb-4 g-2 w-100">
@@ -87,6 +111,7 @@ const ManagerCouponHelper = (props) => {
       </CRow>
 
       {/* Coupon List */}
+      {currentCoupons.length > 0 ? (
       <CRow className="gy-4">
         {currentCoupons.map((coupon, idx) => (
           <CCol md={6} key={idx}>
@@ -145,14 +170,21 @@ const ManagerCouponHelper = (props) => {
           </CCol>
         ))}
       </CRow>
+      ) : (
+        <div className={`text-center py-5 ${isLightMode ? 'p-black' : 'p-white'}`}>
+          <h3>No coupons found</h3>
+          <p>Try adjusting your search criteria</p>
+        </div>
+      )}
 
       {totalPages > 1 && (
         <ManagerPagination
           isLightMode={isLightMode}
-          data={coupons}
+          data={filteredCoupons}
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
+          onPageChange={setCurrentPage}
         />
       )}
     </div>

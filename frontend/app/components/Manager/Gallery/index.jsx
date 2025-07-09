@@ -102,6 +102,7 @@ const ManagerGalleryHelper = (props) => {
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
+          onPageChange={setCurrentPage}
         />
       </div>
     </div>

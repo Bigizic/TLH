@@ -90,6 +90,19 @@ const AddTicketForm = (props) => {
           />
         </Col>
 
+        {/* Quantity */}
+        <Col className={isLightMode ? 'p-black' : 'p-white'} xs='12' lg='6'>
+          <Input
+            type='number'
+            label='Quantity'
+            name='quantity'
+            error={ticketFormErrors.quantity || ''}
+            placeholder='Enter ticket Quantity'
+            value={ticketFormData.quantity || ''}
+            onInputChange={(name, value) => ticketChange(name, value)}
+          />
+        </Col>
+
         {/* Discount Switch */}
         <Col className={isLightMode ? 'p-black' : 'p-white'} xs='12'>
           <Switch

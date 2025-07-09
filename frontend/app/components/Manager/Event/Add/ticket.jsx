@@ -35,6 +35,7 @@ const AddEventTicket = ({
       eventTickets.length === 0 ? ticketFormData : {
         type: '',
         price: '',
+        quantity: '',
         discount: false,
         discountPrice: '',
         coupons: '',
@@ -121,6 +122,21 @@ const RenderDiscountInfo = ({ price, discountPrice, discount }) => {
           }
         />
       </Col>
+
+      {/* Quantity */}
+        <Col className={isLightMode ? 'p-black' : 'p-white'} xs='12' lg='6'>
+          <Input
+            type='number'
+            label='Quantity'
+            name='quantity'
+            placeholder='Enter ticket Quantity'
+            value={ticket.quantity || ''}
+            onInputChange={(name, value) =>
+              handleEditTicket(ticket.quantity, { [name]: value })
+            }
+          />
+        </Col>
+
       {/* Coupons */}
         <Col className={isLightMode ? 'p-black' : 'p-white'} xs='12' lg='6'>
           <SelectOption

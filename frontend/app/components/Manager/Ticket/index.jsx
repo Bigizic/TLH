@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { GoBack } from '../../../containers/goBack/inedx';
 import ManagerPagination from '../Pagination';
+import Input from '../../Common/HtmlTags/Input';
 
 const statsFunc = (events) => {
   const statuses = {
@@ -42,12 +43,24 @@ export const ManagerTicketHelper = (props) => {
   const navigate = useNavigate()
 
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const ticketsPerPage = 10;
   
-  const totalPages = Math.ceil(tickets.length / ticketsPerPage);
+  // Filter tickets based on search term
+  const filteredTickets = tickets.filter(ticket => 
+    ticket.type.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    ticket.price.toString().includes(searchTerm)
+  );
+  
+  const totalPages = Math.ceil(filteredTickets.length / ticketsPerPage);
   const startIndex = (currentPage - 1) * ticketsPerPage;
   const endIndex = startIndex + ticketsPerPage;
-  const currentTickets = tickets.slice(startIndex, endIndex);
+  const currentTickets = filteredTickets.slice(startIndex, endIndex);
+  
+  const handleSearch = (name, value) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
     <div data-aos="fade-up" className='container-lg px-4 d-flex flex-column mb-custom-5em'>
@@ -66,6 +79,18 @@ export const ManagerTicketHelper = (props) => {
       }
 
       <hr className={`${isLightMode ? 'p-black': 'p-white'}`}></hr>
+      
+      {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search tickets by type or price..."
+          name="searchTickets"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
+      
       <div>
         {/* Ticket Stats Summary */}
         <CRow className="mb-4 g-2">
@@ -88,6 +113,7 @@ export const ManagerTicketHelper = (props) => {
         </CRow>
 
         {/* Ticket List */}
+        {currentTickets.length > 0 ? (
         <CRow className="gy-4">
           {currentTickets.map((ticket, idx) => (
             <CCol md={6} key={idx}>
@@ -103,6 +129,7 @@ export const ManagerTicketHelper = (props) => {
 
                   <CCardText style={{ width: 'fit-content' }} as={'div'} className="mt-2">
                     <GetTicketPrice style={{ width: 'fit-content' }} ticket={ticket} />
+                      <strong style={{ width: 'fit-content' }}>Quantity: {ticket.quantity}</strong><br />
                       <strong style={{ width: 'fit-content' }}>Coupons included: {ticket.coupons.length || 0}</strong><br />
                       <strong style={{ width: 'fit-content' }}>Sold:</strong> {ticket.quantitySold || 0}
                   </CCardText>
@@ -112,14 +139,21 @@ export const ManagerTicketHelper = (props) => {
             </CCol>
           ))}
         </CRow>
+        ) : (
+          <div className={`text-center py-5 ${isLightMode ? 'p-black' : 'p-white'}`}>
+            <h3>No tickets found</h3>
+            <p>Try adjusting your search criteria</p>
+          </div>
+        )}
       </div>
 
         <ManagerPagination
           isLightMode={isLightMode}
-          data={tickets}
+          data={filteredTickets}
           totalPages={totalPages}
           startIndex={startIndex}
           endIndex={endIndex}
+          onPageChange={setCurrentPage}
         />
     </div>
   );

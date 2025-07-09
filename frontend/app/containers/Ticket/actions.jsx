@@ -66,12 +66,15 @@ export const addTicket = (navigate) => {
       const rules = {
         type: 'required',
         price: 'required|numeric',
+        quantity: 'required:numeric',
       };
 
       const { isValid, errors } = allFieldsValidation(ticketForm, rules, {
         'required.type': 'Ticket type is required.',
         'required.price': 'Price is required.',
         'numeric.price': 'Price must be a number.',
+        'required.quantity': 'Enter ticket quantity',
+        'numeric.quantity': 'Quantity must be a number'
       });
 
       if (!isValid) {
@@ -103,12 +106,15 @@ export const editTicket = (navigate, id) => {
       const rules = {
         type: 'required',
         price: 'required|numeric',
+        quantity: 'required:numeric',
       };
 
       const { isValid, errors } = allFieldsValidation(ticketForm, rules, {
         'required.type': 'Ticket type is required.',
         'required.price': 'Price is required.',
         'numeric.price': 'Price must be a number.',
+        'required.quantity': 'Enter ticket quantity',
+        'numeric.quantity': 'Quantity must be a number'
       });
 
       if (!isValid) {
@@ -192,12 +198,15 @@ export const addTicketToEvent = (event, navigate) => {
       const rules = {
         type: 'required',
         price: 'required|numeric',
+        quantity: 'required:numeric',
       };
 
       const { isValid, errors } = allFieldsValidation(ticketForm, rules, {
         'required.type': 'Ticket type is required.',
         'required.price': 'Price is required.',
         'numeric.price': 'Price must be a number.',
+        'required.quantity': 'Enter ticket quantity',
+        'numeric.quantity': 'Quantity must be a number'
       });
 
       if (!isValid) {

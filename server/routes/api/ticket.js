@@ -100,7 +100,11 @@ router.post(
   role.check(ROLES.Admin, ROLES.Organizer),
   async (req, res) => {
     try {
-      const { type, price, discount, discountPrice } = req.body;
+      const {
+        type, price,
+        discount, discountPrice,
+        quantity
+      } = req.body;
       const coupons = req.body.coupons.length > 0 ? req.body.coupons.map(coupon => coupon.value) : [];
       const user = req.user._id;
 
@@ -108,6 +112,7 @@ router.post(
         type,
         user,
         price,
+        quantity,
         discount: discount || false,
         discountPrice: discountPrice || 0,
         coupons: coupons || []
@@ -147,13 +152,15 @@ router.put(
   role.check(ROLES.Admin, ROLES.Organizer),
   async (req, res) => {
     try {
-      const { type, discount, discountPrice } = req.body;
+      const { type, discount, price, discountPrice, quantity } = req.body;
       const coupons = req.body.coupons.length > 0 ? req.body.coupons.map(coupon => coupon.value) : [];
       const updatedTicket = await Ticket.findByIdAndUpdate(
         req.params.id,
         {
+          price,
           coupons,
           type,
+          quantity,
           discount,
           discountPrice
         },
