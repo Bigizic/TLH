@@ -71,6 +71,17 @@ const ManagerCouponHelper = (props) => {
       }
       <hr className={`${isLightMode ? 'p-black': 'p-white'}`}></hr>
 
+      {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search coupons by code or percentage..."
+          name="searchCoupons"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
+
       {/* Coupon Stats */}
       <CRow className="mb-4 g-2 w-100">
         <CCol sm={4}>
