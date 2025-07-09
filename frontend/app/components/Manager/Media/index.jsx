@@ -81,6 +81,8 @@ const ManagerMediaHelper = (props) => {
                   {media.mediaUrl ? (
                     isVideo(media.mediaUrl) ? (
                       <video
+                        playsInline
+                        muted
                         src={`${API_URL}${media.mediaUrl}`}
                         style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
                       >

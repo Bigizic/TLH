@@ -3,8 +3,10 @@ import "./style.css";
 
 const VideoDevice = (props) => {
   const {
-    img = "./assets/confernce-image.svg",
+    //img = "./assets/confernce-image.svg",
+    img = "/black_logo.png",
     video = "./assets/video/sample-video-1.mp4",
+    control = true
   } = props;
 
   const [state, setState] = useState(null);
@@ -23,7 +25,7 @@ const VideoDevice = (props) => {
               className="col-page-image"
               id="col-page-image"
               data-aos="fade-up">
-              <img style={{ borderRadius: '10px' }} src={ConfImg} alt="conference-image" />
+              <img loading="lazy" style={{ borderRadius: '10px' }} src={ConfImg} alt="conference-image" />
               <div className="video-play-button" onClick={toggleClick}>
                 <svg
                   onClick={toggleClick}
@@ -86,7 +88,9 @@ const VideoDevice = (props) => {
                     width={320}
                     height={240}
                     id="video1"
-                    controls="controls"></video>
+                    controls={control && "controls"}>
+                      
+                    </video>
                 </div>
               </div>
             </div>

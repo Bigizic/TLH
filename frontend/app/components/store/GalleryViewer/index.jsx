@@ -4,7 +4,8 @@ import './style.css';
 import { API_URL } from '../../../constants';
 import ResolveImage from '../ResolveImage';
 import { formatReadableDate } from '../Card/functions';
-import HeroBanner from '../HeroBanner/HeroBanner';
+import VideoDevice from '../../Common/VideoDevice';
+import VideoOverlay from '../../Common/VideoOverlay';
 
 const GalleryViewer = (props) => {
   const { gallery } = props;
@@ -25,7 +26,7 @@ const GalleryViewer = (props) => {
     }
     controlTimeoutRef.current = setTimeout(() => {
       setShowControls(false); // Hide controls after 3 seconds
-    }, 500); // 3 seconds delay
+    }, 1000); // 1 seconds delay
   }, []);
 
   const openLightbox = useCallback((index) => {
@@ -140,16 +141,7 @@ const GalleryViewer = (props) => {
               </div>
             )}
             {item.mediaType === 'video' && (
-              <video
-                src={ResolveImage(API_URL + item.mediaUrl)}
-                preload="metadata"
-                className="gallery-item-video"
-                muted
-                loop
-                data-aos="fade-up"
-              >
-                Your browser does not support the video tag.
-              </video>
+                <VideoOverlay videoUrl={item.mediaUrl}/>
             )}
           </div>
         ))}

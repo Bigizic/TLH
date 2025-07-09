@@ -1,0 +1,55 @@
+.video-overlay-container {
+  width: 100%;
+  height: 100%;
+}
+
+.video-overlay-container video.gallery-item-video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Or 'contain' based on desired video fit */
+  display: block; /* Removes extra space below video */
+}
+
+.video-overlay-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column; /* To stack image and play button */
+  justify-content: center;
+  align-items: center;
+  background-color: rgba(0, 0, 0, 0.4); /* Semi-transparent overlay */
+  cursor: pointer;
+  z-index: 1; /* Ensures it's above the video */
+  transition: opacity 0.3s ease; /* Smooth fade for overlay */
+}
+
+.video-overlay-backdrop.hidden {
+  opacity: 0;
+  pointer-events: none; /* Allows clicks to pass through when hidden */
+}
+
+.video-overlay-img {
+  max-width: 100%; /* Adjust size as needed */
+  max-height: 100%;
+  object-fit: contain;
+  margin-bottom: 10px; /* Space between image and play button */
+}
+
+.video-play-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* Add any specific styling for your play button if it's more than just the SVG */
+}
+
+.video-play-button svg.play-logo {
+  /* You can adjust size or add animation here */
+  transition: transform 0.2s ease;
+}
+
+/*.video-play-button:hover svg.play-logo {
+  transform: scale(1.1);
+}*/
