@@ -53,7 +53,7 @@ const EventViewer = (props) => {
               {event && event.imageUrls?.map((url, idx) => (
                 <div key={idx} className="event-image-wrapper">
                   {isVideo(url) ? (
-                    <video controls muted playsInline className="event-image">
+                    <video autoPlay muted playsInline loop className="event-image">
                       <source src={`${API_URL}${url}`} type="video/mp4"></source>
                       Your browser does not support the video tag.
                     </video>
