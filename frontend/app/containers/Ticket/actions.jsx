@@ -62,7 +62,6 @@ export const addTicket = (navigate) => {
     dispatch(setTicketLoading(true));
     try {
       const ticketForm = getState().ticket.ticketForm;
-
       const rules = {
         type: 'required',
         price: 'required|numeric',

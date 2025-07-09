@@ -96,7 +96,7 @@ const AddTicketForm = (props) => {
             type='number'
             label='Quantity'
             name='quantity'
-            error={ticketFormErrors.quantity || ''}
+            error={ticketFormErrors['quantity']}
             placeholder='Enter ticket Quantity'
             value={ticketFormData.quantity || ''}
             onInputChange={(name, value) => ticketChange(name, value)}
@@ -174,14 +174,15 @@ render () {
     coupons,
     ticketChange,
     addTicket,
-    addTicketToEvent
+    addTicketToEvent,
+    ticketFormErrors
   } = this.props;
 
   return (
     <AddTicketForm
       isLightMode={isLightMode}
       ticketFormData={ticket}
-      ticketFormErrors={ticketEditFormErrors}
+      ticketFormErrors={ticketFormErrors}
       ticketIsLoading={ticketIsLoading}
       couponsOptions={coupons}
       ticketChange={ticketChange}
@@ -194,6 +195,7 @@ render () {
 
 const mapStateToProps = state => ({
   ticket: state.ticket.ticketForm,
+  ticketFormErrors: state.ticket.ticketFormErrors,
   ticketEditFormErrors: state.ticket.editFormErrors,
   ticketIsLoading: state.ticket.isLoading,
   coupons: state.coupon.couponsSelect

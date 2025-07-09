@@ -212,6 +212,7 @@ const EditEventForm = (props) => {
     <CTableRow>
       <CTableHeaderCell scope="col">Type</CTableHeaderCell>
       <CTableHeaderCell scope="col">Actions</CTableHeaderCell>
+      <CTableHeaderCell scope="col">Q.</CTableHeaderCell>
       <CTableHeaderCell scope="col">Price</CTableHeaderCell>
       <CTableHeaderCell scope="col">Discount Price</CTableHeaderCell>
       <CTableHeaderCell scope="col">Coupon</CTableHeaderCell>
@@ -234,6 +235,7 @@ const EditEventForm = (props) => {
           </CButton>
 
         </CTableDataCell>
+        <CTableDataCell>{ticket.quantity}</CTableDataCell>
         <CTableDataCell>{`₦${ticket.price.toLocaleString()}`}</CTableDataCell>
         <CTableDataCell>
           {ticket.discountPrice ? `₦${ticket.discountPrice.toLocaleString()}` : '—'}

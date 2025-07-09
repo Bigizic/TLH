@@ -359,7 +359,7 @@ router.post(
   role.check(ROLES.Admin, ROLES.Organizer),
   async (req, res) => {
     try {
-      const { event, type, price, discount, discountPrice, coupons } = req.body;
+      let { event, type, price, discount, quantity, discountPrice, coupons } = req.body;
       const user = req.user._id;
 
       if (!event || !type || price == null) {
@@ -380,11 +380,13 @@ router.post(
 
 
       if (eventExists) {
+        coupons = coupons.map((e) => e.value);
 
        const ticket = new Ticket({
           type,
           user,
           price,
+          quantity,
           discount: discount || false,
           discountPrice: discountPrice || 0,
           coupons: coupons || []
@@ -402,6 +404,7 @@ router.post(
     }
 
     } catch (error) {
+      console.log(error)
       return res.status(400).json({
         error: 'Your request could not be processed. Please try again.'
       });
