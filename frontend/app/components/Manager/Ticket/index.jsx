@@ -80,17 +80,6 @@ export const ManagerTicketHelper = (props) => {
 
       <hr className={`${isLightMode ? 'p-black': 'p-white'}`}></hr>
       
-      {/* Search Input */}
-      <div className="mb-4">
-        <Input
-          type="search"
-          placeholder="Search tickets by type or price..."
-          name="searchTickets"
-          value={searchTerm}
-          onInputChange={handleSearch}
-        />
-      </div>
-      
       <div>
         {/* Ticket Stats Summary */}
         <CRow className="mb-4 g-2">
@@ -111,6 +100,17 @@ export const ManagerTicketHelper = (props) => {
             </CCard>
           </CCol>
         </CRow>
+
+        {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search tickets by type or price..."
+          name="searchTickets"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
 
         {/* Ticket List */}
         {currentTickets.length > 0 ? (

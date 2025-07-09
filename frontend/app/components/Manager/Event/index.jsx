@@ -78,17 +78,6 @@ const ManagerEventHelper = (props) => {
       }
       <hr className={`${isLightMode ? 'p-black' : 'p-white'}`} />
       
-      {/* Search Input */}
-      <div className="mb-4">
-        <Input
-          type="search"
-          placeholder="Search events by name..."
-          name="searchEvents"
-          value={searchTerm}
-          onInputChange={handleSearch}
-        />
-      </div>
-      
       <div>
 
         {/* Event Stats Summary */}
@@ -135,6 +124,17 @@ const ManagerEventHelper = (props) => {
             </CCard>
           </CCol>
         </CRow>
+
+        {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search events by name..."
+          name="searchEvents"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
 
         {currentEvents.length > 0 ? (
           /* Event List */

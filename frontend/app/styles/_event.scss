@@ -83,11 +83,6 @@
   .event-tickets {
     margin-top: 1rem;
     font-size: 0.9rem;
-    @include media-breakpoint-down(md) {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
   }
 
   .ticket-item {

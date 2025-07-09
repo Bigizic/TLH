@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react'; // Import useRef
 import {
   CRow,
   CCol,
@@ -7,13 +7,13 @@ import {
   CImage,
 } from '@coreui/react';
 import Button from '../../Common/HtmlTags/Button';
-import ResolveImage from '../../store/ResolveImage'; // Assuming this handles image paths
+import ResolveImage from '../../store/ResolveImage';
 import { API_URL } from '../../../constants';
 import { useNavigate, Link } from 'react-router-dom';
 import { formatDate } from '../../../utils/formatDate';
 import ManagerPagination from '../Pagination';
 import Switch from '../../store/Switch';
-import { FaTrash } from 'react-icons/fa';
+import { FaTrash, FaPlayCircle } from 'react-icons/fa'; // Import FaPlayCircle
 import { connect } from 'react-redux';
 import { withRouter } from '../../../withRouter';
 import actions from '../../../actions';
@@ -43,7 +43,6 @@ const ManagerMediaHelper = (props) => {
   };
 
   const handleDefaultToggle = (mediaId, currentDefaultStatus) => {
-    // Prevent setting to default if another media is already default
     if (!currentDefaultStatus && defaultMedia && defaultMedia._id !== mediaId) {
       return defaultWarning();
     }
@@ -59,6 +58,21 @@ const ManagerMediaHelper = (props) => {
     const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
     const lowerCaseUrl = url.toLowerCase();
     return videoExtensions.some(ext => lowerCaseUrl.endsWith(ext));
+  };
+
+  // Function to handle video play
+  const handleVideoPlay = (e) => {
+    e.preventDefault(); // Prevent any default button behavior
+    const videoElement = e.currentTarget.closest('.video-container').querySelector('video');
+    if (videoElement) {
+      if (videoElement.paused) {
+        videoElement.play().catch(error => {
+          // Optionally, show a message to the user that they need to enable media playback
+        });
+      } else {
+        videoElement.pause();
+      }
+    }
   };
 
   return (
@@ -80,14 +94,37 @@ const ManagerMediaHelper = (props) => {
                 <div style={{ position: 'relative', flexGrow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '150px' }}>
                   {media.mediaUrl ? (
                     isVideo(media.mediaUrl) ? (
-                      <video
-                        playsInline
-                        muted
-                        src={`${API_URL}${media.mediaUrl}`}
-                        style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
-                      >
-                        Your browser does not support the video tag.
-                      </video>
+                      <div className="video-container" style={{ position: 'relative', width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                        <video
+                          // Remove autoplay
+                          playsInline
+                          muted // Keep muted for potential future autoplay or better user experience on first tap
+                          loop // Keep loop if desired
+                          src={`${API_URL}${media.mediaUrl}`}
+                          style={{ maxWidth: '100%', maxHeight: '200px', objectFit: 'contain' }}
+                        >
+                          Your browser does not support the video tag.
+                        </video>
+                        {/* Overlay with play button */}
+                        <div
+                          onClick={handleVideoPlay}
+                          style={{
+                            position: 'absolute',
+                            top: 0,
+                            left: 0,
+                            width: '100%',
+                            height: '100%',
+                            backgroundColor: 'rgba(0,0,0,0.3)',
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            cursor: 'pointer',
+                            zIndex: 10
+                          }}
+                        >
+                            <FaPlayCircle size={60} color="white" />
+                        </div>
+                      </div>
                     ) : (
                       <CImage
                         src={ResolveImage(`${API_URL}${media.mediaUrl}`)}
