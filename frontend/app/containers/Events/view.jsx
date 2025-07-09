@@ -9,12 +9,16 @@ import Button from '../../components/Common/HtmlTags/Button';
 import { API_URL } from '../../constants';
 import ResolveImage from '../../components/store/ResolveImage';
 import { formatReadableDate } from '../../components/store/Card/functions';
+import { MdOutlineAddShoppingCart, MdShoppingCart } from "react-icons/md";
 import Page404 from '../Page404';
-import { MdOutlineAddShoppingCart } from "react-icons/md";
 import LoadingIndicator from '../../components/store/LoadingIndicator';
+import Cart from '../Cart';
 
 const EventViewer = (props) => {
-  const { event = {}, eventIsLoading, eventSlugChange } = props;
+  const { event = {},
+          eventIsLoading,
+          eventSlugChange,
+          addToCart } = props;
 
   // --- ALL HOOKS MUST BE DECLARED HERE, AT THE TOP LEVEL ---
   const videoRefs = useRef([]);
@@ -81,6 +85,7 @@ const EventViewer = (props) => {
 
   if (isEventSelect) {
     return (
+      <>
         <div style={{ paddingTop: '10em' }} className="event-view bg-white">
           <div className='lg-view-event'>
             <div className="event-card">
@@ -131,12 +136,24 @@ const EventViewer = (props) => {
                 {event && event.tickets && event.tickets.length > 0 ? (
                   <ul className='view-event-ticket view-event-ticket-lg'>
                     {event && event.tickets.map((ticket) => (
-                      <li key={ticket._id} className="ticket-item">
+                      <li 
+                        key={ticket._id} 
+                        className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
+                        onClick={() => ticket.quantity > 0 && addToCart({
+                          ticketId: ticket._id,
+                          eventId: event._id,
+                          eventName: event.name,
+                          ticketType: ticket.type,
+                          price: ticket.price,
+                          discount: ticket.discount,
+                          discountPrice: ticket.discountPrice,
+                        })}
+                      >
                         {!ticket.discount &&
                         <div className='d-flex flex-column'>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                           <span className='font-size-15'>₦{ticket.price}</span><br />
-                          <span>{ticket.quantity} Remaining</span>
+                          <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                         </div>
                         }
                         {ticket.discount && ticket.discountPrice && (
@@ -144,10 +161,13 @@ const EventViewer = (props) => {
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                             <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
                             <span className="font-size-20">₦{ticket.discountPrice}</span><br />
-                            <span>{ticket.quantity} Remaining</span>
+                            <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                           </div>
                         )}
-                        <MdOutlineAddShoppingCart size={30}/>
+                        <MdOutlineAddShoppingCart 
+                          size={30} 
+                          style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -205,12 +225,24 @@ const EventViewer = (props) => {
                 {event && event.tickets && event.tickets.length > 0 ? (
                   <ul className='view-event-ticket'>
                     {event.tickets.map((ticket) => (
-                      <li key={ticket._id} className="ticket-item">
+                      <li 
+                        key={ticket._id} 
+                        className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
+                        onClick={() => ticket.quantity > 0 && addToCart({
+                          ticketId: ticket._id,
+                          eventId: event._id,
+                          eventName: event.name,
+                          ticketType: ticket.type,
+                          price: ticket.price,
+                          discount: ticket.discount,
+                          discountPrice: ticket.discountPrice,
+                        })}
+                      >
                         {!ticket.discount &&
                         <div className='d-flex flex-column'>
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                           <span className='font-size-15'>₦{ticket.price}</span>< br/>
-                          <span>{ticket.quantity} Remaining</span>
+                          <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                         </div>
                         }
                         {ticket.discount && ticket.discountPrice && (
@@ -218,10 +250,13 @@ const EventViewer = (props) => {
                           <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
                             <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
                             <span className="font-size-20">₦{ticket.discountPrice}</span><br />
-                            <span>{ticket.quantity} Remaining</span>
+                            <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                           </div>
                         )}
-                        <MdOutlineAddShoppingCart size={30}/>
+                        <MdOutlineAddShoppingCart 
+                          size={30} 
+                          style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
+                        />
                       </li>
                     ))}
                   </ul>
@@ -232,6 +267,8 @@ const EventViewer = (props) => {
             </div>
           </div>
         </div>
+        <Cart />
+        </>
     );
   }
   // If isEventSelect is false, return null or a loading state if needed.

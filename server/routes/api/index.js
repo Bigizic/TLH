@@ -9,7 +9,7 @@ const ticket = require('./ticket');
 const coupon = require('./coupon');
 const gallery = require('./gallery');
 const media = require('./media');
-//const cart = require('./cart');
+const cart = require('./cart');
 //const order = requrie('./order');
 //const newsletter = require('./newsletter')
 
@@ -30,5 +30,6 @@ router.use('/ticket', ticket);
 router.use('/coupon', coupon);
 router.use('/gallery', gallery);
 router.use('/media', media);
+router.use('/cart', cart);
 
 module.exports = router;

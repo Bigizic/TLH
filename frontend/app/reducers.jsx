@@ -6,6 +6,7 @@ import dashboard from './containers/Dashboard/reducer';
 import login from './containers/Login/reducer';
 import navigation from './containers/Navigation/reducer';
 import event from './containers/Events/reducer';
+import cart from './containers/Cart/reducer';
 import ticket from './containers/Ticket/reducer';
 import coupon from './containers/Coupon/reducer';
 import gallery from './containers/Gallery/reducer';
@@ -18,6 +19,7 @@ const rootReducer = combineReducers({
   dashboard,
   login,
   navigation,
+  cart,
   event,
   ticket,
   coupon,

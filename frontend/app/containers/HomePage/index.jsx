@@ -30,7 +30,7 @@ class Home extends React.PureComponent {
   let video, images = null
   const eventImages = [event1, event3, event2, event4];
 
-  if (homeMedia.length > 0) {
+  if (homeMedia && homeMedia.length > 0) {
     const defaultMedia = homeMedia.find(media => media.default === true);
 
     if (defaultMedia) {
