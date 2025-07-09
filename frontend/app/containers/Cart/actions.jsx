@@ -103,9 +103,9 @@ export const addToCart = (item) => {
         price: item.price,
         discount: item.discount || false,
         discountPrice: item.discountPrice || 0,
-        quantity: 1
+        quantity: 1,
+        ticketQuantity: item.ticketQuantity
       };
-      
       let response;
       
       if (cartId) {

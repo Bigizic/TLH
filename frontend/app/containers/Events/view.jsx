@@ -147,6 +147,7 @@ const EventViewer = (props) => {
                           price: ticket.price,
                           discount: ticket.discount,
                           discountPrice: ticket.discountPrice,
+                          ticketQuantity: ticket.quantity
                         })}
                       >
                         {!ticket.discount &&
@@ -236,6 +237,7 @@ const EventViewer = (props) => {
                           price: ticket.price,
                           discount: ticket.discount,
                           discountPrice: ticket.discountPrice,
+                          ticketQuantity: ticket.quantity
                         })}
                       >
                         {!ticket.discount &&

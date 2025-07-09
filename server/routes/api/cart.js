@@ -88,8 +88,10 @@ router.put('/:cartId/add', async (req, res) => {
     );
     
     if (existingItemIndex !== -1) {
-      // Update quantity if item exists
-      cart.tickets[existingItemIndex].quantity += 1;
+      // Update quantity if item exists and if the cart quantity doesn't suppase item.ticketQuantity
+      if (cart.tickets[existingItemIndex].quantity < item.ticketQuantity) {
+        cart.tickets[existingItemIndex].quantity += 1;
+      }
     } else {
       // Add new item to cart
       cart.tickets.push(item);

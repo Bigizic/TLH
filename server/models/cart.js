@@ -27,6 +27,9 @@ const CartItemSchema = new Schema({
     type: Number,
     default: 1
   },
+  ticketQuantity: {
+    type: Number,
+  },
   price: {
     type: Number,
     required: true

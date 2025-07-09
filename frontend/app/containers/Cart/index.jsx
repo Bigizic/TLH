@@ -98,13 +98,15 @@ class Cart extends React.PureComponent {
                         >
                           <FaMinus size={12} />
                         </button>
-                        <span>{item.quantity}</span>
-                        <button onClick={() => this.handleQuantityChange(item.ticketId, item.quantity + 1)}
+                        <span>{item.quantity <= item.ticketQuantity ? item.quantity : item.ticketQuantity}</span>
+                        <button
+                          onClick={() => this.handleQuantityChange(item.ticketId, item.quantity + 1)}
+                          disabled={item.quantity >= item.ticketQuantity}
                         >
                           <FaPlus size={12} />
                         </button>
                       </div>
-                      <button 
+                      <button
                         className="remove-item" 
                         onClick={() => removeFromCart(item.ticketId)}
                       >
