@@ -9,16 +9,19 @@ import Button from '../../components/Common/HtmlTags/Button';
 import { API_URL } from '../../constants';
 import ResolveImage from '../../components/store/ResolveImage';
 import { formatReadableDate } from '../../components/store/Card/functions';
-import { MdOutlineAddShoppingCart, MdShoppingCart } from "react-icons/md";
+import { MdOutlineAddShoppingCart, MdShoppingCart } from 'react-icons/md';
 import Page404 from '../Page404';
 import LoadingIndicator from '../../components/store/LoadingIndicator';
 import Cart from '../Cart';
 
 const EventViewer = (props) => {
-  const { event = {},
-          eventIsLoading,
-          eventSlugChange,
-          addToCart } = props;
+  const {
+    event = {},
+    eventIsLoading,
+    eventSlugChange,
+    addToCart,
+    selectedTickets
+  } = props;
 
   // --- ALL HOOKS MUST BE DECLARED HERE, AT THE TOP LEVEL ---
   const videoRefs = useRef([]);
@@ -26,9 +29,9 @@ const EventViewer = (props) => {
 
   // Helper to determine if the URL is a video
   const isVideo = (url) => {
-      const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
-      const lowerCaseUrl = url.toLowerCase();
-      return videoExtensions.some(ext => lowerCaseUrl.endsWith(ext));
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi', '.flv', '.wmv'];
+    const lowerCaseUrl = url.toLowerCase();
+    return videoExtensions.some(ext => lowerCaseUrl.endsWith(ext));
   };
 
   // Function to handle slide changes in FadeSlider
@@ -52,11 +55,11 @@ const EventViewer = (props) => {
         playPromise.then(_ => {
           // Autoplay started!
         })
-        .catch(error => {
+          .catch(error => {
           // Autoplay was prevented.
           // This can happen if the user hasn't interacted with the document yet.
           // You might want to show a play button here.
-        });
+          });
       }
     }
   }, [currentSlideIndex, event.imageUrls]); // Re-run when currentSlideIndex or imageUrls change
@@ -69,239 +72,324 @@ const EventViewer = (props) => {
   }, []);
   // --- END OF HOOK DECLARATIONS ---
 
-
   // Now you can place your conditional returns
   if (eventIsLoading) {
-      return <LoadingIndicator />;
+    return <LoadingIndicator />;
   }
 
   if (eventSlugChange) {
     return (
-      <Page404 text={"Oops, the event you're looking for has changed"}/>
-    )
+      <Page404 text="Oops, the event you're looking for has changed" />
+    );
   }
 
-  const isEventSelect = Object.keys(event).length > 0 ? true : false; // This can be placed here
+  const isEventSelect = Object.keys(event).length > 0; // This can be placed here
 
   if (isEventSelect) {
     return (
       <>
-        <div style={{ paddingTop: '10em' }} className="event-view bg-white">
+        <div style={{ paddingTop: '10em' }} className='event-view bg-white'>
           <div className='lg-view-event'>
-            <div className="event-card">
-                <FadeSlider
-                  dots={event && event.imageUrls.length > 1 ? true : false}
-                  infinite={true}
-                  speed={500}
-                  slidesToShow={1}
-                  slidesToScroll={1}
-                  fade={true}
-                  autoplay={true}
-                  autoplaySpeed={2000}
-                  arrows={false}
-                  swipeToSlide={true}
-                  beforeChange={handleBeforeChange}
-                >
-                  {event && event.imageUrls?.map((url, idx) => (
-                    <div key={idx} className="event-image-wrapper">
-                      {isVideo(url) ? (
+            <div className='event-card'>
+              <FadeSlider
+                dots={!!(event && event.imageUrls.length > 1)}
+                infinite
+                speed={500}
+                slidesToShow={1}
+                slidesToScroll={1}
+                fade
+                autoplay
+                autoplaySpeed={2000}
+                arrows={false}
+                swipeToSlide
+                beforeChange={handleBeforeChange}
+              >
+                {event && event.imageUrls?.map((url, idx) => (
+                  <div key={idx} className='event-image-wrapper'>
+                    {isVideo(url)
+                      ? (
                         <video
                           ref={el => (videoRefs.current[idx] = el)}
                           muted
                           playsInline
                           loop
-                          className="event-image"
+                          className='event-image'
                         >
-                          <source src={`${API_URL}${url}`} type="video/mp4"></source>
+                          <source src={`${API_URL}${url}`} type='video/mp4' />
                           Your browser does not support the video tag.
                         </video>
-                      ) : (
-                        <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
-                      )}
-                    </div>
-                  ))}
-                </FadeSlider>
+                        )
+                      : (
+                        <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className='event-image' />
+                        )}
+                  </div>
+                ))}
+              </FadeSlider>
             </div>
 
-            <div className="event-info">
-              <h2 className="event-title">{event && event.name}</h2>
-              <p className='font-size-20' dangerouslySetInnerHTML={{ __html: event.description }}></p>
-              <p className="event-location p-black">Location: {event && event.location}</p>
-              <p className="event-location p-black">Category: {event && event.category}</p>
-              <p className="event-date p-black">
+            <div className='event-info'>
+              <h2 className='event-title text-wrap text-break w-100 overflow-hidden'>{event && event.name}</h2>
+              <p className='font-size-20 text-wrap text-break w-100 overflow-hidden' dangerouslySetInnerHTML={{ __html: event.description }} />
+              <p className='event-location p-black'>Location: {event && event.location}</p>
+              <p className='event-location p-black'>Category: {event && event.category}</p>
+              <p className='event-date p-black'>
                 From {formatReadableDate(event && event.startDate)} <b className='p-black'>to</b> {formatReadableDate(event && event.endDate)}
               </p>
               <p className='event-host'>Your host: {event && event.user && event.user.organizer && event.user.organizer.companyName || 'The link hangouts'}</p>
-              {event && event.status !== "Ended" ? <div className="event-tickets">
-                {event && event.tickets && event.tickets.length > 0 ? (
-                  <ul className='view-event-ticket view-event-ticket-lg'>
-                    {event && event.tickets.map((ticket) => (
-                      <li 
-                        key={ticket._id} 
-                        className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
-                        onClick={() => ticket.quantity > 0 && addToCart({
-                          ticketId: ticket._id,
-                          eventId: event._id,
-                          eventName: event.name,
-                          ticketType: ticket.type,
-                          price: ticket.price,
-                          discount: ticket.discount,
-                          discountPrice: ticket.discountPrice,
-                          ticketQuantity: ticket.quantity
-                        })}
-                      >
-                        {!ticket.discount &&
-                        <div className='d-flex flex-column'>
-                          <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                          <span className='font-size-15'>₦{ticket.price}</span><br />
-                          <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
-                        </div>
-                        }
-                        {ticket.discount && ticket.discountPrice && (
-                          <div style={{ position: 'relative' }}>
-                          <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                            <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                            <span className="font-size-20">₦{ticket.discountPrice}</span><br />
-                            <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
-                          </div>
-                        )}
-                        <MdOutlineAddShoppingCart 
-                          size={30} 
-                          style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className='font-size-20'>No tickets available</p>
+              {event && event.status !== 'Ended'
+                ? <div className='event-tickets'>
+                  {event && event.tickets && event.tickets.length > 0
+                    ? (
+                      <ul className='view-event-ticket view-event-ticket-lg'>
+                        {event && event.tickets.map((ticket) => {
+                          const isSelected = selectedTickets.includes(ticket._id);
+                          if (!isSelected) {
+                            return (
+                              <li
+                                key={ticket._id}
+                                className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
+                                onClick={() => ticket.quantity > 0 && addToCart({
+                  ticketId: ticket._id,
+                  eventId: event._id,
+                  eventName: event.name,
+                  ticketType: ticket.type,
+                  price: ticket.price,
+                  discount: ticket.discount,
+                  discountPrice: ticket.discountPrice,
+                  ticketQuantity: ticket.quantity
+                })}
+                              >
+                                {!ticket.discount && (
+                  <div className='d-flex flex-column'>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
+                                </div>
                 )}
-              </div> : <p className='text-center font-size-20 p-gray'>Sold out</p>}
+                                {ticket.discount && ticket.discountPrice && (
+                  <div style={{ position: 'relative' }}>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
+                                </div>
+                )}
+                                <MdOutlineAddShoppingCart
+                  size={30}
+                  style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
+                />
+                              </li>
+                            );
+                          } else {
+                            return (
+                              <li key={ticket._id} className='ticket-item sold-out'>
+                                {!ticket.discount && (
+                  <div className='d-flex flex-column'>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
+                                </div>
+                )}
+                                {ticket.discount && ticket.discountPrice && (
+                  <div style={{ position: 'relative' }}>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
+                                </div>
+                )}
+                              </li>
+                            );
+                          }
+                        })}
+                      </ul>
+                      )
+                    : (
+                      <p className='font-size-20'>No tickets available</p>
+                      )}
+                  </div>
+                : <p className='text-center font-size-20 p-gray'>Sold out</p>}
             </div>
           </div>
 
-          <div className="event-card d-lg-none mobile-view-event">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          <div className='event-card d-lg-none mobile-view-event'>
             <FadeSlider
-              dots={event && event.imageUrls.length > 1 ? true : false}
-              infinite={true}
+              dots={!!(event && event.imageUrls.length > 1)}
+              infinite
               speed={500}
               slidesToShow={1}
               slidesToScroll={1}
-              fade={true}
-              autoplay={true}
+              fade
+              autoplay
               autoplaySpeed={2000}
               arrows={false}
-              swipeToSlide={true}
+              swipeToSlide
               beforeChange={handleBeforeChange}
             >
               {event && event.imageUrls?.map((url, idx) => (
-                <div key={idx} className="event-image-wrapper">
-                  {isVideo(url) ? (
-                    <video
-                      ref={el => (videoRefs.current[idx] = el)}
-                      muted
-                      playsInline
-                      loop
-                      className="event-image"
-                    >
-                      <source src={`${API_URL}${url}`} type="video/mp4"></source>
-                      Your browser does not support the video tag.
-                    </video>
-                  ) : (
-                    <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className="event-image" />
-                  )}
+                <div key={idx} className='event-image-wrapper'>
+                  {isVideo(url)
+                    ? (
+                      <video
+                        ref={el => (videoRefs.current[idx] = el)}
+                        muted
+                        playsInline
+                        loop
+                        className='event-image'
+                      >
+                        <source src={`${API_URL}${url}`} type='video/mp4' />
+                        Your browser does not support the video tag.
+                      </video>
+                      )
+                    : (
+                      <img src={ResolveImage(`${API_URL}${url}`)} alt={`event-${idx}`} className='event-image' />
+                      )}
                 </div>
               ))}
             </FadeSlider>
 
-            <div className="event-info">
-              <h2 className="event-title">{event && event.name}</h2>
-              <p className='font-size-20' dangerouslySetInnerHTML={{ __html: event.description }}></p>
-              <p className="event-location p-black">Location: {event && event.location}</p>
-              <p className="event-location p-black">Category: {event && event.category}</p>
-              <p className="event-date p-black">
+            <div className='event-info'>
+              <h2 className='event-title text-wrap text-break w-100 overflow-hidden'>{event && event.name}</h2>
+              <p className='font-size-20 text-wrap text-break w-100 overflow-hidden' dangerouslySetInnerHTML={{ __html: event.description }} />
+              <p className='event-location p-black'>Location: {event && event.location}</p>
+              <p className='event-location p-black'>Category: {event && event.category}</p>
+              <p className='event-date p-black'>
                 From {formatReadableDate(event && event.startDate)} <b className='p-black'>to</b> {formatReadableDate(event && event.endDate)}
               </p>
               <p className='event-host'>Your host: {event && event.user && event.user.organizer && event.user.organizer.companyName || 'The link hangouts'}</p>
-              {event && event.status !== "Ended" ? <div className="event-tickets">
-                {event && event.tickets && event.tickets.length > 0 ? (
-                  <ul className='view-event-ticket'>
-                    {event.tickets.map((ticket) => (
-                      <li 
-                        key={ticket._id} 
-                        className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
-                        onClick={() => ticket.quantity > 0 && addToCart({
-                          ticketId: ticket._id,
-                          eventId: event._id,
-                          eventName: event.name,
-                          ticketType: ticket.type,
-                          price: ticket.price,
-                          discount: ticket.discount,
-                          discountPrice: ticket.discountPrice,
-                          ticketQuantity: ticket.quantity
-                        })}
-                      >
-                        {!ticket.discount &&
-                        <div className='d-flex flex-column'>
-                          <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                          <span className='font-size-15'>₦{ticket.price}</span>< br/>
-                          <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
-                        </div>
-                        }
-                        {ticket.discount && ticket.discountPrice && (
-                          <div style={{ position: 'relative' }}>
-                          <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                            <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                            <span className="font-size-20">₦{ticket.discountPrice}</span><br />
-                            <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
-                          </div>
-                        )}
-                        <MdOutlineAddShoppingCart 
-                          size={30} 
-                          style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
-                        />
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className='font-size-20'>No tickets available</p>
+              {event && event.status !== 'Ended'
+                ? <div className='event-tickets'>
+                  {event && event.tickets && event.tickets.length > 0
+                    ? (
+                      <ul className='view-event-ticket'>
+                        {event && event.tickets.map((ticket) => {
+                          const isSelected = selectedTickets.includes(ticket._id);
+                          if (!isSelected) {
+                            return (
+                              <li
+                                key={ticket._id}
+                                className={`ticket-item ${ticket.quantity <= 0 ? 'sold-out' : ''}`}
+                                onClick={() => ticket.quantity > 0 && addToCart({
+                                         ticketId: ticket._id,
+                                         eventId: event._id,
+                                         eventName: event.name,
+                                         ticketType: ticket.type,
+                                         price: ticket.price,
+                                         discount: ticket.discount,
+                                         discountPrice: ticket.discountPrice,
+                                         ticketQuantity: ticket.quantity
+                                  })}
+                              >
+                                {!ticket.discount && (
+                  <div className='d-flex flex-column'>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
+                                </div>
                 )}
-              </div> : <p className='text-center font-size-20 p-gray'>Sold out</p>}
+                                {ticket.discount && ticket.discountPrice && (
+                  <div style={{ position: 'relative' }}>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
+                                </div>
+                )}
+                                <MdOutlineAddShoppingCart
+                  size={30}
+                  style={{ cursor: ticket.quantity > 0 ? 'pointer' : 'not-allowed', color: ticket.quantity > 0 ? 'inherit' : '#ccc' }}
+                />
+                              </li>
+                            );
+                          } else {
+                            return (
+                              <li key={ticket._id} className='ticket-item sold-out'>
+                                {!ticket.discount && (
+                  <div className='d-flex flex-column'>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
+                                </div>
+                )}
+                                {ticket.discount && ticket.discountPrice && (
+                  <div style={{ position: 'relative' }}>
+                                  <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
+                                </div>
+                )}
+                              </li>
+                            );
+                          }
+                        })}
+
+                      </ul>
+                      )
+                    : (
+                      <p className='font-size-20'>No tickets available</p>
+                      )}
+                  </div>
+                : <p className='text-center font-size-20 p-gray'>Sold out</p>}
             </div>
           </div>
         </div>
         <Cart />
-        </>
+      </>
     );
   }
   // If isEventSelect is false, return null or a loading state if needed.
   return null;
 };
 
-
 class EventView extends React.Component {
-  componentDidMount() {
+  componentDidMount () {
     const slug = this.props.match.params.slug;
     if (slug) {
       this.props.fetchEventSlug(slug);
     }
   }
-  componentWillUnmount() {
+
+  componentWillUnmount () {
     this.props.vewingEventToggler(false);
     this.props.resetEventSlugChange();
   }
 
-  render() {
+  render () {
     const { event, isLoading, eventSlugChange } = this.props;
     return (
-        <EventViewer {...this.props}/>
-    )
+      <EventViewer {...this.props} />
+    );
   }
 }
 
 const mapStateToProps = state => ({
   event: state.event.selectEvent,
   eventIsLoading: state.event.isLoading,
-  eventSlugChange: state.event.eventSlugChange
+  eventSlugChange: state.event.eventSlugChange,
+
+  selectedTickets: state.cart.selectedTickets
 });
 
 export default connect(mapStateToProps, actions)(withRouter(EventView));

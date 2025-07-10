@@ -16,3 +16,8 @@ export const SET_CART_ID = 'src/Cart/SET_CART_ID';
 export const CART_ERROR = 'src/Cart/CART_ERROR';
 
 export const CART_ID = 'cart_id';
+export const SELECTED_TICKETS = 'src/Cart/SELECTED_TICKETS';
+export const DELETE_SELECTED_TICKETS = 'src/Cart/DELETE_SELECTED_TICKETS';
+export const SET_GUEST_INFO = 'src/Cart/SET_GUEST_INFO';
+export const SHOW_GUEST_FORM = 'src/Cart/SHOW_GUEST_FORM';
+export const SET_GUEST_FORM_ERRORS = 'src/Cart/SET_GUEST_FORM_ERRORS';

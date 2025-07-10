@@ -14,7 +14,13 @@ import {
   CART_LOADING,
   HANDLE_CART_TOTAL,
   SET_CART_ID,
-  CART_ERROR
+  CART_ERROR,
+  SET_GUEST_INFO,
+  SHOW_GUEST_FORM,
+  SET_GUEST_FORM_ERRORS,
+
+  SELECTED_TICKETS,
+  DELETE_SELECTED_TICKETS
 } from './constants';
 
 const initialState = {
@@ -23,11 +29,40 @@ const initialState = {
   cartId: null,
   total: 0,
   loading: false,
-  error: null
+  selectedTickets: [],
+  error: null,
+  guestInfo: {},
+  showGuestForm: false,
+  guestErrors: {}
 };
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_GUEST_FORM_ERRORS:
+      return {
+        ...state,
+        guestErrors: action.payload
+      }
+    case SHOW_GUEST_FORM:
+      return {
+        ...state,
+        showGuestForm: !action.paylaod
+      };
+    case SET_GUEST_INFO:
+      return {
+        ...state,
+        guestInfo: action.payload
+      }
+    case DELETE_SELECTED_TICKETS:
+      return {
+        ...state,
+        selectedTickets: state.selectedTickets.filter(t => t._id !== action.payload)
+      }
+    case SELECTED_TICKETS:
+      return {
+        ...state,
+        selectedTickets: [action.payload, ...state.selectedTickets]
+      }
     case TOGGLE_CART:
       return {
         ...state,
@@ -67,7 +102,8 @@ const cartReducer = (state = initialState, action) => {
         ...state,
         items: [],
         total: 0,
-        cartId: null
+        cartId: null,
+        selectedTickets: []
       };
     case SET_CART_ITEMS:
       return {

@@ -8,10 +8,11 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
+import { Navigate } from 'react-router-dom';
 import actions from '../../actions';
+import GuestCheckout from '../Guest/checkout';
 
 class Cart extends React.PureComponent {
-
   componentDidMount() {
     this.props.initializeCart();
   }
@@ -41,8 +42,17 @@ class Cart extends React.PureComponent {
       removeFromCart,
       clearCart,
       handleCheckout,
-      authenticated
+      authenticated,
+      addGuest,
+      setGuestForm,
+      showGuestForm,
+      guestInfo,
+      handleGuestInputChange,
+      guestErrors
     } = this.props;
+
+    const handleUserCheckout = () => {
+    };
 
     return (
       <>
@@ -57,7 +67,7 @@ class Cart extends React.PureComponent {
         {/* Cart Sidebar */}
         <div className={`cart-sidebar ${isOpen ? 'open' : ''}`}>
           <div className="cart-header">
-            <h3>Your Cart</h3>
+            <h3>{!showGuestForm ? 'Your Cart' : 'Guest Checkout'}</h3>
             <button className="close-cart" onClick={toggleCart}>
               <IoMdClose size={24} />
             </button>
@@ -71,7 +81,7 @@ class Cart extends React.PureComponent {
             <div className="empty-cart">
               <p>Your cart is empty</p>
             </div>
-          ) : (
+          ) : !showGuestForm ? (
             <>
               <div className="cart-items">
                 {items.map((item) => (
@@ -125,10 +135,22 @@ class Cart extends React.PureComponent {
                 </div>
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
-                  <button className="checkout-btn" onClick={handleCheckout}>{authenticated ?  'Checkout' : 'Continue as guest'}</button>
+                  {authenticated ? (
+                    <button className="checkout-btn" onClick={handleUserCheckout}>Checkout</button>
+                  ) : (
+                    <button 
+                      className="checkout-btn" 
+                      onClick={() => setGuestForm(true)}
+                    >
+                      Continue as guest
+                    </button>
+                  )}
                 </div>
               </div>
             </>
+          )
+          : (
+            <GuestCheckout />
           )}
         </div>
         
@@ -146,7 +168,10 @@ const mapStateToProps = (state) => {
     items: state.cart.items,
     total: state.cart.total,
     loading: state.cart.loading,
-    error: state.cart.error
+    error: state.cart.error,
+    showGuestForm: state.cart.showGuestForm,
+    guestInfo: state.cart.guestInfo,
+    guestErrors: state.cart.guestErrors
   };
 };
 
