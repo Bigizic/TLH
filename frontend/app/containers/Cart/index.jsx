@@ -41,6 +41,7 @@ class Cart extends React.PureComponent {
       removeFromCart,
       clearCart,
       handleCheckout,
+      authenticated
     } = this.props;
 
     return (
@@ -124,7 +125,7 @@ class Cart extends React.PureComponent {
                 </div>
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
-                  <button className="checkout-btn" onClick={handleCheckout}>Checkout</button>
+                  <button className="checkout-btn" onClick={handleCheckout}>{authenticated ?  'Checkout' : 'Continue as guest'}</button>
                 </div>
               </div>
             </>

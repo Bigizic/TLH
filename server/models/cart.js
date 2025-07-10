@@ -11,6 +11,10 @@ const CartItemSchema = new Schema({
     type: Schema.Types.ObjectId,
     ref: 'Event'
   },
+  coupon: {
+    type: Schema.Types.ObjectId,
+    ref: 'Coupon'
+  },
   eventName: {
     type: String,
     required: true

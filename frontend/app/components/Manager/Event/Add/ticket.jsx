@@ -130,9 +130,9 @@ const RenderDiscountInfo = ({ price, discountPrice, discount }) => {
             label='Quantity'
             name='quantity'
             placeholder='Enter ticket Quantity'
-            value={ticket.quantity || ''}
+            value={ticket.quantity}
             onInputChange={(name, value) =>
-              handleEditTicket(ticket.quantity, { [name]: value })
+              handleEditTicket(ticket.id, { [name]: value })
             }
           />
         </Col>
