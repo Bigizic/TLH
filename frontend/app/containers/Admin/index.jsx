@@ -39,7 +39,7 @@ import EditGallery from '../../components/Manager/Gallery/Edit';
 
 import AddMedia from '../../components/Manager/Media/Add';
 
-import AdminOrder from '../../components/Manager/Orders/AdminOrders';
+//import AdminOrder from '../../components/Manager/Orders/AdminOrders';
 
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@coreui/coreui/dist/css/coreui.min.css';
