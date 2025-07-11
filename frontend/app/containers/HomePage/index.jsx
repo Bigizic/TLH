@@ -49,11 +49,12 @@ class Home extends React.PureComponent {
 
   return (
     <>
-    <HomeBanner video={video}/>
+    <HomeBanner media={video}/>
       <HeroBanner
         heading="Discover The Link Hangouts Experience"
         desc="We are a vibrant lifestyle company based in Lagos, Nigeria, dedicated to curating and orchestrating exceptional events, parties, and hangouts that bring people together to create lasting memories."
-        bannerImage={images && images.length > 3 ? images : eventImages}
+        //bannerImage={images && images.length > 3 ? images : eventImages}
+        bannerImage={eventImages}
         PButton={<PButton link={"/events"} content="Discover Events" />}
         SButton={<SButton link={"/gallery"} content="See Gallery" />}
         className={"border-10"}

@@ -1,5 +1,8 @@
 import React from "react";
 import "./Footer.css";
+import { MdOutlineWhatsapp, MdOutlineMailOutline } from "react-icons/md";
+import { AiOutlineTikTok, AiOutlineInstagram } from "react-icons/ai";
+
 
 const Footer = () => {
   const ftrlogo = "/logo_.png";
@@ -33,26 +36,36 @@ const Footer = () => {
               </div>
               <div className="col-links-c">
                 <h4 className="p-white">Socials</h4>
-                <ul>
+                <ul className="d-flex" style={{ gap: '.25em' }}>
                   <li>
-                    <a className="p-white" target="_blank" href="https://chat.whatsapp.com/BITMxQSwpFT5x8zjX0v6z2">Whatsapp</a>
+                    <a className="p-white" target="_blank" href="https://chat.whatsapp.com/BITMxQSwpFT5x8zjX0v6z2">
+                    <MdOutlineWhatsapp size={30}/>
+                    </a>
                   </li>
                   <li>
-                    <a className="p-white" target="_blank" href="https://www.tiktok.com/@linkhangouts?_t=ZN-8xRsHnS1ygY&_r=1">Tiktok</a>
+                    <a className="p-white" target="_blank" href="https://www.tiktok.com/@linkhangouts?_t=ZN-8xRsHnS1ygY&_r=1">
+                    <AiOutlineTikTok size={30} />
+                    </a>
                   </li>
                   <li>
-                    <a className="p-white" target="_blank" href="https://www.instagram.com/thelinkhangouts?igsh=MThybGJsMDA3bW50ZA%3D%3D&utm_source=qr">Instagram</a>
+                    <a className="p-white" target="_blank" href="https://www.instagram.com/thelinkhangouts?igsh=MThybGJsMDA3bW50ZA%3D%3D&utm_source=qr">
+                    <AiOutlineInstagram size={30} />
+                    </a>
                   </li>
                 </ul>
               </div>
               <div className="col-links-s">
                 <h4 className="p-white">Support</h4>
-                <ul>
+                <ul className="d-flex" style={{ gap: '.25em' }}>
                   <li>
-                    <a className="p-white" href="mailto:contact@thelinkhangout.com">Contact Us</a>
+                    <a className="p-white" href="mailto:contact@thelinkhangout.com">
+                      <MdOutlineMailOutline size={30} />
+                    </a>
                   </li>
                   <li>
-                    <a className="p-white" target="_blank" href="https://chat.whatsapp.com/BITMxQSwpFT5x8zjX0v6z2">Join the chat room</a>
+                    <a className="p-white" target="_blank" href="https://wa.me/message/PIGYWR7NTGHKK1">
+                    <MdOutlineWhatsapp size={30}/>
+                    </a>
                   </li>
                 </ul>
               </div>
