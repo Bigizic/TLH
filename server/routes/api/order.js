@@ -1,15 +1,42 @@
 const express = require('express');
+const mongoose = require('mongoose');
 const router = express.Router();
 const Order = require('../../models/order');
 const Cart = require('../../models/cart');
 const Event = require('../../models/event');
 const Ticket = require('../../models/ticket');
 const auth = require('../../middleware/auth');
+const role = require('../../middleware/role');
 const { ROLES } = require('../../utils/constants');
 const PaymentHandler = require('../../utils/paystack');
 
-const mongoose = require('mongoose');
-const newObjectId = mongoose.Types.ObjectId;
+/**
+ * generates unique code
+ */
+const generateUniqueCode = () => {
+  // const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  const characters = '0123456789';
+  let code = '';
+  for (let i = 0; i < 5; i++) {
+      code += characters.charAt(Math.floor(Math.random() * characters.length));
+  }
+  return code
+}
+
+/**
+ * create new object id (_id)
+ * @returns 
+ */
+const newObjectId = async() => {
+  let uniqueCode = generateUniqueCode()
+  let orderFound = await Order.exists({ _id: uniqueCode })
+
+  while (orderFound) {
+    uniqueCode = generateUniqueCode();
+    orderFound = await Order.exists({ _id: uniqueCode })
+  }
+  return uniqueCode;
+}
 
 router.post('/add', async (req, res) => {
   try {
@@ -26,7 +53,6 @@ router.post('/add', async (req, res) => {
       billingEmail,
     } = req.body;
 
-
     const cartDoc = await Cart.findById(cart);
     if (!cartDoc) {
       return res.status(400).json({ error: 'Cart not found' });
@@ -35,8 +61,10 @@ router.post('/add', async (req, res) => {
         cartDoc.guest = guest
         await cartDoc.save()
     }
+    const ID = await newObjectId();
 
     const order = new Order({
+      _id: ID,
       cart,
       user,
       guest,
@@ -85,11 +113,10 @@ router.put('/edit/order/', async (req, res) => {
           paymentFees,
         }
       }
-    const options = { new: true };
+    //const options = { new: true };
     const updateOrder = await Order.findOneAndUpdate(
         { payStackId: payStackId },
         update,
-        options
     )
   
     const cartDoc = await Cart.findById(updateOrder.cart)
@@ -152,88 +179,121 @@ router.put('/edit/order/', async (req, res) => {
 })
 
 // fetch order api
-/*router.get('/:orderId', auth, async (req, res) => {
+router.get(
+  '/id/:id',
+  auth,
+  async (req, res) => {
   try {
-    const orderId = req.params.orderId;
-
-    let orderDoc = null;
-
-    if (req.user.role === ROLES.Admin) {
-      orderDoc = await Order.findOne({ _id: orderId }).populate({
+    const orderId = req.params.id;
+    const currentUser = req.user;
+    // Base order query
+    let orderDoc = await Order.findOne({ _id: orderId })
+      .populate('events')
+      .populate({
         path: 'cart',
         populate: {
-          path: 'products.product',
-        }
-      });
-    } else {
-      const user = req.user._id;
-      orderDoc = await Order.findOne({ _id: orderId, user }).populate({
-        path: 'cart',
-        populate: {
-          path: 'products.product',
-        }
-      });
-    }
-
+          path: 'tickets.eventId',
+        },
+      })
+      .populate('guest');
     if (!orderDoc || !orderDoc.cart) {
       return res.status(404).json({
         message: `Cannot find order with the id: ${orderId}.`
       });
     }
-    // const selectedAddress = await Address.findOne({_id: orderDoc.address})
-    const selectedAddress = orderDoc.address
-    const { firstName, lastName, email } = await User.findOne({ _id: orderDoc.user });
 
-    // send request to paystack to fetch order details
-    const paymentDetails = await PaymentHandler(orderDoc.payStackId);
+    let address = null, phoneNumber = null;
+    if (orderDoc.address?? orderDoc.address.street.length > 0) {
+      address = orderDoc.address
+    }
+    if (orderDoc.phoneNumber && orderDoc.phoneNumber.length > 0) {
+      phoneNumber = orderDoc.phoneNumber
+    }
 
     let order = {
       _id: orderDoc._id,
-      total: orderDoc.total,
-      created: orderDoc.created,
-      totalTax: 0,
-      products: orderDoc?.cart?.products,
-      cartId: orderDoc.cart._id,
-      currency: orderDoc.cart.currency,
-      selectedAddress: selectedAddress,
-      phoneNumber: orderDoc.phoneNumber,
+      createdAt: orderDoc.createdAt,
+      user: orderDoc.user,
+      guest: orderDoc.guest,
+      billingEmail: orderDoc.billingEmail,
+      address: address !== null ? address : null,
+      phoneNumber: phoneNumber !== null ? phoneNumber : null,
+      finalAmount: orderDoc.finalAmount,
+      discountAmount: orderDoc.discountAmount,
+      paymentMethod: orderDoc.paymentMethod,
+      paymentFees: orderDoc.paymentFees,
+      amountBeforeDiscount: orderDoc.amountBeforeDiscount,
       status: orderDoc.status,
-      payStackReference: orderDoc.payStackReference,
-      payStackId: orderDoc.payStackId,
-      paymentType: orderDoc.paymentType,
-      user: `${firstName} ${lastName}`,
-      userEmail: email,
-
-      amount: paymentDetails.data.amount,
-      paymentStatus: paymentDetails.data.gateway_response,
-      paymentDate: paymentDetails.data.paid_at,
-      paymentCurrency: paymentDetails.data.currency,
-      paymentFees: paymentDetails.data.fees,
-      deliveryType: orderDoc.deliveryType,
-
-      edited: orderDoc.edited,
+      cart: orderDoc.cart,
+      events: orderDoc.events,
     };
 
-    order = store.caculateTaxAmount(order);
+    // === Admin Logic ===
+    if (currentUser.role === ROLES.Admin) {
+      const paymentDetails = await PaymentHandler(orderDoc.payStackId);
+      order = {
+        ...order,
+        payStackId: orderDoc.payStackId,
+        payStackReference: orderDoc.payStackReference,
+        paymentStatus: paymentDetails.data.status,
+        paymentDate: paymentDetails.data.paid_at,
+        paymentCurrency: paymentDetails.data.currency,
+      };
+    }
 
-    return res.status(200).json({
-      order
-    });
+    // === User Logic ===
+    else if (currentUser.role === ROLES.User) {
+      const paymentDetails = await PaymentHandler(orderDoc.payStackId);
+      order = {
+        ...order,
+        paymentStatus: paymentDetails.data.status,
+        paymentDate: paymentDetails.data.paid_at,
+        paymentCurrency: paymentDetails.data.currency,
+      };
+    }
+
+    // === Organizer Logic ===
+    else if (currentUser.role === ROLES.Organizer) {
+      const organizerId = currentUser._id.toString();
+
+      const filteredEvents = orderDoc.events.filter(
+        (event) => event.user.toString() === organizerId
+      );
+
+      const filteredTickets = orderDoc.cart?.tickets?.filter(
+        (ticket) =>
+          ticket.eventId &&
+          ticket.eventId.user &&
+          ticket.eventId.user.toString() === organizerId
+      );
+
+      order = {
+        ...order,
+        events: filteredEvents,
+        cart: {
+          ...orderDoc.cart.toObject(),
+          tickets: filteredTickets,
+        }
+      };
+    }
+
+    return res.status(200).json({ order });
+
   } catch (error) {
     return res.status(400).json({
-        error: 'Your request could not be processed. Please try again.'
-      });
+      error: 'Your request could not be processed. Please try again.'
+    });
   }
-});*/
+});
 
-
-// fetch my orders api
-router.get('/me', auth, async (req, res) => {
+// fetch orders related to an organizer event or all orders for admin
+router.get(
+  '/all_orders',
+  auth,
+  role.check(ROLES.Admin, ROLES.Organizer),
+  async (req, res) => {
   try {
-    // const { page = 1, limit = 10 } = req.query;
-    const user = req.user._id;
-    const my_orders = req.query.my_orders === 'true';
-    console.log(req.user)
+    const user = req.user;
     let orders = await Order.find()
       .populate('events')
       .populate({
@@ -242,8 +302,9 @@ router.get('/me', auth, async (req, res) => {
           path: 'tickets.eventId',
         }
       })
-      .sort('-created')
-    if (user.role === ROLES.Organizer || my_orders === true) {
+      .populate('guest')
+      .sort('-createdAt')
+    if (user.role === ROLES.Organizer) {
       const organizerId = user._id.toString();
 
       orders = orders
@@ -277,11 +338,40 @@ router.get('/me', auth, async (req, res) => {
         })
         .filter(Boolean); // remove nulls
     }
-
     return res.status(200).json({
       status: 200,
       orders
     });
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Your request could not be processed. Please try again.'
+    });
+  }
+})
+
+
+// fetch my orders api
+router.get(
+  '/me',
+  auth,
+  role.check(ROLES.Admin, ROLES.Organizer, ROLES.Member),
+  async (req, res) => {
+  try {
+    const user = req.user;
+    let orders = await Order.find({'user._id': user._id})
+      .populate('events')
+      .populate({
+        path: 'cart',
+        populate: {
+          path: 'tickets.eventId',
+        }
+      })
+      .populate('guest')
+      .sort('-createdAt')
+      return res.status(200).json({
+        status: 200,
+        orders
+      });
   } catch (error) {
     return res.status(400).json({
       error: 'Your request could not be processed. Please try again.'

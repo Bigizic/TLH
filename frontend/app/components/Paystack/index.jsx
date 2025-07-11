@@ -39,7 +39,7 @@ export const payStackHelper = async (props) => {
           await axios.post(`${API_URL}/order/add`, {
             cart,
             guest: guest._id || null,
-            user: user._id || null,
+            user: user._id ? user : null,
             finalAmount,
             events,
             tickets,

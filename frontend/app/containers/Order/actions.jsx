@@ -1,6 +1,8 @@
 import {
   SET_IS_LOADING,
-  FETCH_ORDERS
+  FETCH_ORDER,
+  FETCH_ORDERS,
+  FETCH_USER_ORDERS
 } from './constants';
 import axios from 'axios';
 import { API_URL } from '../../constants';
@@ -14,17 +16,12 @@ export const setOrderLoading = (v) => {
   }
 }
 
-export const fetchOrders = (my_orders=null) => {
+export const fetchOrders = () => {
   return async (dispatch) => {
     dispatch(setOrderLoading(true))
       try {
-        let orders;
-        if (my_orders) {
-            orders = await axios.get(`${API_URL}/order/me?my_orders=true`)
-        } else {
-          orders = await axios.get(`${API_URL}/order/me`)
-        }
-        if (orders.status === 200 && orders.data.orders.length > 0) {
+        const orders = await axios.get(`${API_URL}/order/all_orders`)
+        if (orders.status === 200 && orders.data.orders) {
             dispatch({
                 type: FETCH_ORDERS,
                 payload: orders.data.orders
@@ -37,3 +34,42 @@ export const fetchOrders = (my_orders=null) => {
     }
   }
 }
+
+export const userOrders = () => {
+  return async (dispatch) => {
+    dispatch(setOrderLoading(true))
+      try {
+        const orders = await axios.get(`${API_URL}/order/me`);
+        if (orders.status === 200 && orders.data.orders) {
+            dispatch({
+                type: FETCH_USER_ORDERS,
+                payload: orders.data.orders
+            })
+        }
+      } catch (error) {
+        handleError(error, dispatch);
+      } finally {
+        dispatch(setOrderLoading(false))
+    }
+  }
+}
+
+export const fetchOrder = (id) => {
+  return async (dispatch) => {
+    dispatch(setOrderLoading(true));
+    try {
+      const order = await axios.get(`${API_URL}/order/id/${id}`);
+      if (order.status === 200 && order.data.order) {
+          dispatch({
+              type: FETCH_ORDER,
+              payload: order.data.order
+          })
+      }
+    } catch (error) {
+      handleError(error, dispatch);
+    } finally {
+      dispatch(setOrderLoading(false))
+    }
+  }
+}
+

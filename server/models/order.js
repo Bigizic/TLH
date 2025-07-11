@@ -1,10 +1,37 @@
 const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
+  _id: {
+    type: String,
+    auto: true,
+    default: mongoose.Schema.ObjectId,
+  },
   user: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-    default: null
+    _id: {
+      type: mongoose.Schema.ObjectId,
+      ref: 'User',
+      default: null
+    },
+    name: {
+      type: String
+    },
+  },
+  address: {
+    street: {
+      type: String
+    },
+    city: {
+      type: String
+    },
+    state: {
+      type: String
+    },
+    country: {
+      type: String
+    },
+  },
+  phoneNumber: {
+    type: String
   },
   guest: {
     type: mongoose.Schema.Types.ObjectId,

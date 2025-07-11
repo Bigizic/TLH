@@ -62,7 +62,7 @@ const Card = ({ event, type = "event" }) => {
           ? "Sold out"
           : getRegistrationStatus(event.startDate, event.endDate) === "soon"
           ? "Coming Soon"
-          : "Register Now"}
+          : "Get a ticket"}
       </button>
     </div>
     </Link>

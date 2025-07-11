@@ -41,10 +41,10 @@ router.get('/', auth, async (req, res) => {
     const { page = 1, limit = 10 } = req.query;
 
     const users = await User.find({}, { password: 0, _id: 0, googleId: 0 })
-      .sort('-created')
       .populate('organizer', 'companyName')
       .limit(limit * 1)
-      .skip((page - 1) * limit);
+      .skip((page - 1) * limit)
+      .sort('-createdAt');
 
     const count = await User.countDocuments();
 

@@ -230,6 +230,7 @@ export const addEventTicket = (navigate) => {
         type: ticket.type,
         price: parseFloat(ticket.price),
         discount: ticket.discount || false,
+        quantity: ticket.quantity || 0,
         coupons: ticket.coupons || [],
         discountPrice: parseFloat(ticket.discountPrice) || 0,
       }));

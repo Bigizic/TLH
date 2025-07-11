@@ -162,15 +162,15 @@ const EventViewer = (props) => {
                                 {!ticket.discount && (
                   <div className='d-flex flex-column'>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='font-size-15'>₦{ticket.price.toLocaleString()}</span><br />
                                   <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                                 </div>
                 )}
                                 {ticket.discount && ticket.discountPrice && (
                   <div style={{ position: 'relative' }}>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price.toLocaleString()}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice.toLocaleString()}</span><br />
                                   <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                                 </div>
                 )}
@@ -186,15 +186,15 @@ const EventViewer = (props) => {
                                 {!ticket.discount && (
                   <div className='d-flex flex-column'>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='font-size-15'>₦{ticket.price.toLocaleString()}</span><br />
                                   <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
                                 </div>
                 )}
                                 {ticket.discount && ticket.discountPrice && (
                   <div style={{ position: 'relative' }}>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price.toLocaleString()}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice.toLocaleString()}</span><br />
                                   <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
                                 </div>
                 )}
@@ -304,15 +304,15 @@ const EventViewer = (props) => {
                                 {!ticket.discount && (
                   <div className='d-flex flex-column'>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='font-size-15'>₦{ticket.price.toLocaleString()}</span><br />
                                   <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                                 </div>
                 )}
                                 {ticket.discount && ticket.discountPrice && (
                   <div style={{ position: 'relative' }}>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price.toLocaleString()}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice.toLocaleString()}</span><br />
                                   <span>{ticket.quantity > 0 ? `${ticket.quantity} Remaining` : 'Sold Out'}</span>
                                 </div>
                 )}
@@ -328,15 +328,15 @@ const EventViewer = (props) => {
                                 {!ticket.discount && (
                   <div className='d-flex flex-column'>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <span className='font-size-15'>₦{ticket.price}</span><br />
+                                  <span className='font-size-15'>₦{ticket.price.toLocaleString()}</span><br />
                                   <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
                                 </div>
                 )}
                                 {ticket.discount && ticket.discountPrice && (
                   <div style={{ position: 'relative' }}>
                                   <h4 className='font-size-25' style={{ padding: '0', margin: '0' }}>{ticket.type}</h4>
-                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price}</b>&nbsp;&nbsp;
-                                  <span className='font-size-20'>₦{ticket.discountPrice}</span><br />
+                                  <b style={{ fontSize: '15px', textDecoration: 'line-through', color: 'black' }}>₦{ticket.price.toLocaleString()}</b>&nbsp;&nbsp;
+                                  <span className='font-size-20'>₦{ticket.discountPrice.toLocaleString()}</span><br />
                                   <span className='text-center sold-out font-size-15 p-gray'>This ticket has been selected</span>
                                 </div>
                 )}

@@ -7,9 +7,8 @@ import Button from '../../components/Common/HtmlTags/Button';
 
 const OrderSuccess = ({ authenticated }) => {
   const { id } = useParams();
-  console.log(id)
   const isGuest = id && id.startsWith('guest-');
-  console.log(isGuest)
+  const guestOrderID = id.split('-')[1]
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -25,7 +24,7 @@ const OrderSuccess = ({ authenticated }) => {
 
         <div className='order-success-text'>
         <h1>Thank You for Your Order!</h1>
-        <p className="order-id">Order ID: {id.split('-')[1]}</p>
+        <p className="order-id">Order ID: {isGuest ? guestOrderID : id}</p>
         
         <div className="order-details">
           <p>Your ticket purchase was successful. You will receive a confirmation email shortly with your ticket details.</p>
@@ -43,7 +42,7 @@ const OrderSuccess = ({ authenticated }) => {
             <div className="user-message">
               <p>You can view and manage your tickets in your dashboard.</p>
               <div className="action-buttons">
-                <Link to="/dashboard/tickets"><Button className="primary" text={"View My Tickets"} /></Link>
+                <Link to="/dashboard/orders/my-orders"><Button className="primary" text={"View My Tickets"} /></Link>
                 <Link to="/events"><Button type="secondary" text={"Explore More Events"} /></Link>
               </div>
             </div>

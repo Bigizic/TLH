@@ -10,6 +10,7 @@ import { showNotification } from '../Notification/actions';
 import { allFieldsValidation } from '../../utils/validation';
 import handleError from '../../utils/error';
 import { payStackHelper } from '../../components/Paystack';
+import { ROLES } from '../../constants';
 
 import {
   TOGGLE_CART,
@@ -172,8 +173,10 @@ export const addToCart = (item) => {
   return async (dispatch, getState) => {
     try {
       dispatch(setCartLoading(true));
+
+      const { authenticated } = getState().authentication;
       
-      const { authenticated, items } = getState().cart;
+      const { items } = getState().cart;
       
       // Check if user is guest and already has an item in cart
       if (!authenticated && items.length > 0) {
@@ -358,14 +361,24 @@ export const checkout = (navigate, guest=null) => {
   return async (dispatch, getState) => {
     dispatch(setCartLoading(true));
     try {
-      const { email, name, _id } = guest;
+      let name, email, _id;
+      if (guest) {
+        email = guest.email
+        name = guest.name
+        _id = guest._id
+      }
       const user = getState().account.user;
       const cart = getState().cart;
       const { eventId, ticketId, discountPrice, price } = cart.items[0]
       const { cartId, total } = cart
       const userEmail = user.email
-      const user_name = user.name
       const userId = user._id
+      let user_name;
+      if (user.role === ROLES.Organizer) {
+        user_name = user.organizer.companyName
+      } else {
+        user_name = user.name
+      }
 
       dispatch(toggleCart());
       dispatch(clearCart());
@@ -394,7 +407,7 @@ export const checkout = (navigate, guest=null) => {
       if (ps && ps.status === 200) {
         // payment successful
         // redirect to confirmation page
-        navigate(`/order/success/${guest.name ? 'guest-' + ps.data.order._id : ps.data.order._id}`)
+        navigate(`/order/success/${name ? 'guest-' + ps.data.order._id : ps.data.order._id}`)
       }
     } catch (error) {
       handleError(error, dispatch)

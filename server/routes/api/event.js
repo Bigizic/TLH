@@ -160,7 +160,7 @@ router.post(
       const existingEvent = await Event.findOne({ name });
       if (existingEvent) {
         files.forEach(file => {
-          deleteFilesFromPath([`/uploads/event/${file.filename}`]);
+          deleteFilesFromPath([`/uploads/events/${file.filename}`]);
         });
         return res.status(400).json({ error: 'An event with this name already exists.' });
       }

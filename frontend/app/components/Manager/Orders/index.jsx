@@ -22,16 +22,27 @@ import { connect } from 'react-redux';
 import Button from '../../Common/HtmlTags/Button';
 import ManagerPagination from '../Pagination';
 import LoadingIndicator from '../../store/LoadingIndicator';
+import Input from '../../Common/HtmlTags/Input';
 
 const ManagerOrderList = (props) => {
   const { isLightMode, user, orderIsLoading, orders } = props;
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState('');
   const ordersPerPage = 10;
+  const filteredOrders = orders.filter(order => 
+    order._id.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
-  const totalPages = Math.ceil(orders.length / ordersPerPage);
+  const totalPages = Math.ceil(filteredOrders.length / ordersPerPage);
   const startIndex = (currentPage - 1) * ordersPerPage;
   const endIndex = startIndex + ordersPerPage;
-  const currentOrders = orders.slice(startIndex, endIndex);
+  const currentOrders = filteredOrders.slice(startIndex, endIndex);
+  const navigate = useNavigate();
+
+  const handleSearch = (name, value) => {
+    setSearchTerm(value);
+    setCurrentPage(1); // Reset to first page when searching
+  };
 
   return (
     <div data-aos="fade-up" className='container-lg px-4 d-flex flex-column mb-custom-5em'>
@@ -39,17 +50,29 @@ const ManagerOrderList = (props) => {
         <div className='d-flex justify-content-between'>
         <h2 style={{ margin: 0 }} className={`${isLightMode ? 'p-black': 'p-white'}`}>Orders</h2>
         {
-          user.role === ROLES.Admin && <Button type={"third-btn"} text={"My orders"}/>
+          <Button onClick={() => navigate("/dashboard/orders/my-orders")} cls={`${isLightMode ? 'bg-white p-black': 'bg-black p-white'} align-self-end`} type={"third-btn"} text={"My orders"}/>
         }
         </div>
         <hr className={`${isLightMode ? 'p-black': 'p-white'}`} style={{ margin: '.5em' }}></hr>
-        <h2 className={`${isLightMode ? 'p-black': 'p-white'} font-size-20`}>50 Orders</h2>
+        <h2 className={`${isLightMode ? 'p-black': 'p-white'} font-size-20`}>{orders.length} Orders</h2>
+
+        {/* Search Input */}
+      <div className="mb-4">
+        <Input
+          type="search"
+          placeholder="Search orders by id..."
+          name="sarchOrders"
+          value={searchTerm}
+          onInputChange={handleSearch}
+        />
+      </div>
 
 
       <CRow className='gy-4 w-100'>
       {currentOrders.map((order, idx) => (
        <CCol md={6} key={idx}>
-    <CCard className={`${isLightMode ? 'bg-white p-black' : 'bg-black p-white border'} flex-row overflow-hidden`}>
+        <Link to={`/dashboard/orders/${order._id}`}>
+      <CCard className={`${isLightMode ? 'bg-white p-black' : 'bg-black p-white border'} flex-row overflow-hidden`}>
       <div style={{ width: '40%' }}>
         <CImage
           src={ResolveImage(API_URL + order.events[0].imageUrls[0] || '')}
@@ -59,28 +82,33 @@ const ManagerOrderList = (props) => {
       </div>
       <CCardBody>
         <CCardTitle className='mb-2'>
-          <strong>Billing:</strong> {order.billingEmail || 'N/A'}
+          <strong>Order:</strong> #{order._id || 'N/A'}
         </CCardTitle>
 
         <CBadge color={order.paymentStatus === 'success' ? 'success' : 'danger'} className='mb-2'>
           {order.paymentStatus}
         </CBadge>
+        <CRow>
+          <CCol className='mb-2'>
+            <strong>Email:</strong> {order.billingEmail || 'N/A'}
+          </CCol>
+        </CRow>
 
         <CRow className='mb-2'>
           <CCol>
             <strong>Method:</strong> {order.paymentMethod || 'N/A'}
           </CCol>
           <CCol className='text-end'>
-            <strong>Date:</strong> {new Date(order.createdAt).toLocaleDateString()}
+            <strong>Date:</strong> {formatDate(order.createdAt)}
           </CCol>
         </CRow>
 
         <CRow className='mb-2'>
           <CCol>
-            <strong>Ordered By:</strong> {order.user ? 'Registered User' : 'Guest'}
+            <strong>Ordered By:</strong> {order.user ? 'User' : 'Guest'}
           </CCol>
           <CCol className='text-end'>
-            {order.guest?.name && <><strong>Guest Name:</strong> {order.guest.name}</>}
+            {order.guest?.name ? <><strong>Guest Name:</strong> {order.guest.name}</> : <><strong>User name: {order.user.name}</strong></>}
           </CCol>
         </CRow>
 
@@ -88,27 +116,28 @@ const ManagerOrderList = (props) => {
           <div className='mt-2'>
             <CRow>
               <CCol><strong>Original:</strong></CCol>
-              <CCol className='text-end'>₦{order.amountBeforeDiscount}</CCol>
+              <CCol className='text-end'>₦{order.amountBeforeDiscount.toLocaleString()}</CCol>
             </CRow>
             <CRow>
               <CCol><strong>Discount:</strong></CCol>
-              <CCol className='text-end text-danger'>-₦{order.discountAmount}</CCol>
+              <CCol className='text-end text-danger'>-₦{order.discountAmount.toLocaleString()}</CCol>
             </CRow>
             <CRow>
               <CCol><strong>Final:</strong></CCol>
-              <CCol className='text-end fw-bold text-success'>₦{order.finalAmount}</CCol>
+              <CCol className='text-end fw-bold text-success'>₦{order.finalAmount.toLocaleString()}</CCol>
             </CRow>
           </div>
         ) : (
           <div className='mt-2'>
             <CRow>
               <CCol><strong>Final Amount:</strong></CCol>
-              <CCol className='text-end fw-bold'>₦{order.finalAmount}</CCol>
+              <CCol className='text-end fw-bold'>₦{order.finalAmount.toLocaleString()}</CCol>
             </CRow>
           </div>
         )}
       </CCardBody>
     </CCard>
+  </Link>
   </CCol>
 ))}
       </CRow>

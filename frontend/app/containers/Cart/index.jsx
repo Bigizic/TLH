@@ -8,18 +8,35 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
 import { IoMdClose } from 'react-icons/io';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import actions from '../../actions';
 import GuestCheckout from '../Guest/checkout';
 import LoadingIndicator from '../../components/store/LoadingIndicator';
 import Input from '../../components/Common/HtmlTags/Input';
 
-class Cart extends React.PureComponent {
-  componentDidMount() {
-    this.props.initializeCart();
-  }
-  calculateTotal = () => {
-    const { items } = this.props;
+const CartViewer = (props) => {
+  const {
+    isOpen, 
+      items, 
+      total,
+      loading,
+      toggleCart, 
+      removeFromCart,
+      clearCart,
+      checkout,
+      authenticated,
+      addGuest,
+      setGuestForm,
+      showGuestForm,
+      guestInfo,
+      handleGuestInputChange,
+      guestErrors,
+      coupon,
+      updateCartItem
+  } = props;
+  const navigate = useNavigate();
+
+  const calculateTotal = () => {
     return items.reduce((total, item) => {
       const itemPrice = item.discount && item.discountPrice 
         ? item.discountPrice 
@@ -28,34 +45,15 @@ class Cart extends React.PureComponent {
     }, 0);
   };
 
-  handleQuantityChange = (ticketId, newQuantity) => {
+  const handleQuantityChange = (ticketId, newQuantity) => {
     if (newQuantity < 1) return;
     
-    this.props.updateCartItem(ticketId, { quantity: newQuantity });
+    updateCartItem(ticketId, { quantity: newQuantity });
   };
 
-  render() {
-    const { 
-      isOpen, 
-      items, 
-      total,
-      loading,
-      toggleCart, 
-      removeFromCart,
-      clearCart,
-      handleCheckout,
-      authenticated,
-      addGuest,
-      setGuestForm,
-      showGuestForm,
-      guestInfo,
-      handleGuestInputChange,
-      guestErrors,
-      coupon
-    } = this.props;
-
-    const handleUserCheckout = () => {
-    };
+  const handleUserCheckout = () => {
+    checkout(navigate);
+  };
 
     return (
       <>
@@ -105,14 +103,14 @@ class Cart extends React.PureComponent {
                     <div className="item-actions">
                       <div className="quantity-controls">
                         <button 
-                          onClick={() => this.handleQuantityChange(item.ticketId, item.quantity - 1)}
+                          onClick={() => handleQuantityChange(item.ticketId, item.quantity - 1)}
                           disabled={item.quantity <= 1}
                         >
                           <FaMinus size={12} />
                         </button>
                         <span>{item.quantity <= item.ticketQuantity ? item.quantity : item.ticketQuantity}</span>
                         <button
-                          onClick={() => this.handleQuantityChange(item.ticketId, item.quantity + 1)}
+                          onClick={() => handleQuantityChange(item.ticketId, item.quantity + 1)}
                           disabled={item.quantity >= item.ticketQuantity}
                         >
                           <FaPlus size={12} />
@@ -132,7 +130,7 @@ class Cart extends React.PureComponent {
               <div className="cart-footer">
                 <div className="cart-total">
                   <span>Total:</span>
-                  <span>₦{(total || this.calculateTotal()).toLocaleString()}</span>
+                  <span>₦{(total || calculateTotal()).toLocaleString()}</span>
                 </div>
 
                 {/* coupon */}
@@ -165,7 +163,7 @@ class Cart extends React.PureComponent {
             </>
           )
           : (
-            <GuestCheckout {...this.props}/>
+            <GuestCheckout {...props}/>
           )}
         </div>
         
@@ -173,6 +171,37 @@ class Cart extends React.PureComponent {
         {isOpen && <div className="cart-overlay" onClick={toggleCart}></div>}
       </>
     );
+}
+
+
+class Cart extends React.PureComponent {
+  componentDidMount() {
+    this.props.initializeCart();
+  }
+
+  render() {
+    const { 
+      isOpen, 
+      items, 
+      total,
+      loading,
+      toggleCart, 
+      removeFromCart,
+      clearCart,
+      handleCheckout,
+      authenticated,
+      addGuest,
+      setGuestForm,
+      showGuestForm,
+      guestInfo,
+      handleGuestInputChange,
+      guestErrors,
+      coupon
+    } = this.props;
+
+    return (
+      <CartViewer {...this.props}/>
+    )
   }
 }
 
