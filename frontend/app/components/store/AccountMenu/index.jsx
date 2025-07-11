@@ -23,6 +23,7 @@ import {
   MdOutlinePermMedia, MdOutlinePeople,
   MdOutlineGroups2, MdOutlinePayment } from "react-icons/md";
 import { RiCoupon3Line } from "react-icons/ri";
+import { AiOutlineShop } from "react-icons/ai";
 import { LuLayoutDashboard } from "react-icons/lu";
 import { CiLogout } from "react-icons/ci";
 import { useDispatch } from 'react-redux';
@@ -44,7 +45,8 @@ const iconMap = {
   MdOutlinePermMedia,
   MdOutlinePeople,
   MdOutlineGroups2,
-  MdOutlinePayment
+  MdOutlinePayment,
+  AiOutlineShop
 };
 
 const AccountMenu = (props) => {

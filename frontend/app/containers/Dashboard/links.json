@@ -2,12 +2,13 @@
   "ROLE ADMIN": [
     { "to": "", "name": "Dashboard", "prefix": "/dashboard", "icon": "LuLayoutDashboard" },
     { "to": "/events", "name": "Events", "prefix": "/dashboard", "icon": "MdOutlineEventRepeat" },
-    { "to": "/tickets", "name": "All Tickets", "prefix": "/dashboard", "icon": "IoTicketOutline" },
     { "to": "/coupons", "name": "Coupons", "prefix": "/dashboard", "icon": "RiCoupon3Line" },
+    { "to": "/tickets", "name": "All Tickets", "prefix": "/dashboard", "icon": "IoTicketOutline" },
     { "to": "/orders", "name": "All Orders", "prefix": "/dashboard", "icon": "IoReceiptOutline" },
+    { "to": "/products", "name": "Products", "prefix": "/dashboard", "icon": "AiOutlineShop" },
     { "to": "/organizers", "name": "Organizers", "prefix": "/dashboard", "icon": "MdOutlineGroups2" },
     { "to": "/users", "name": "Users", "prefix": "/dashboard", "icon": "MdOutlinePeople" },
-    { "to": "/guests", "name": "Guest Buyers", "prefix": "/dashboard", "icon": "MdOutlinePersonSearch" },
+    { "to": "/guests", "name": "Guests", "prefix": "/dashboard", "icon": "MdOutlinePersonSearch" },
     { "to": "/media", "name": "Media Manager", "prefix": "/dashboard", "icon": "MdOutlinePermMedia" },
     { "to": "/gallery", "name": "Gallery", "prefix": "/dashboard", "icon": "MdOutlinePhotoLibrary" },
     { "to": "/newsletter", "name": "Newsletter", "prefix": "/dashboard", "icon": "MdOutlineCampaign" },
@@ -28,8 +29,9 @@
     { "to": "/security", "name": "Account Security", "prefix": "/dashboard", "provider": ["Email"], "icon": "MdOutlineSecurity" }
   ],
   "ROLE MEMBER": [
-    { "to": "", "name": "My Events", "prefix": "/dashboard" },
-    { "to": "/tickets", "name": "My Tickets", "prefix": "/dashboard" },
+    { "to": "", "name": "Events", "prefix": "/dashboard" },
+    { "to": "/tickets", "name": "Tickets", "prefix": "/dashboard" },
+    { "to": "/shop", "name": "Shop", "prefix": "" },
     { "to": "/account", "name": "Account Details", "prefix": "/dashboard" },
     { "to": "/security", "name": "Account Security", "prefix": "/dashbard" }
   ]

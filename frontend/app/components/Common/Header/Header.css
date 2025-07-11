@@ -26,7 +26,6 @@ header.scrolled {
 }
 .navigation {
   display: flex;
-  flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
 }
@@ -111,6 +110,8 @@ header.scrolled {
   text-decoration: none;
   color: white;
 }
+
+
 /* Menu Toggle */
 /* mobile menu toggle button */
 .header-menu-mobile {

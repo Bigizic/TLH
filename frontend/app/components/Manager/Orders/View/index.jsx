@@ -86,7 +86,7 @@ const OrderViewer = (props) => {
                   </CRow>
                   <CRow>
                     <CCol><strong>Discount:</strong></CCol>
-                    <CCol className='text-end'>
+                    <CCol className='text-end text-danger'>
                       -₦{order?.discountAmount ? order.discountAmount.toLocaleString() : '0'}
                     </CCol>
                   </CRow>

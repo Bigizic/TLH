@@ -8,7 +8,7 @@ const UserHeaderHelper = (props) => {
 
     return (
         <>
-            <div className="nav">
+            <div className="nav d-lg-flex align-self-end header-lg">
               <ul>
                 {
                     links && links.map((link, index) => {
@@ -30,7 +30,7 @@ const UserHeaderHelper = (props) => {
                 </ul>
             </div>
 
-              <div className="buttons">
+              <div className="buttons header-lg-buttons">
                 <div className="logout-button">
                   <Link to="/" className="button " onClick={doLogout}>
                     Logout
@@ -39,9 +39,13 @@ const UserHeaderHelper = (props) => {
               </div>
 
 
+
+
             <div className="menu-toggle" onClick={toggleMenu}>
               <CgMenuRightAlt color={"white"} size={30}/>
             </div>
+
+
 
             <div className={`header-menu-mobile  ${isMenuOpen ? "show" : " "}`}>
               <div
@@ -58,6 +62,7 @@ const UserHeaderHelper = (props) => {
                             <li key={index}>
                                 <NavLink
                                     to={PREFIX + link.to}
+                                    onClick={toggleMenu}
                                 >
                                     {link.name}
                                 </NavLink>
