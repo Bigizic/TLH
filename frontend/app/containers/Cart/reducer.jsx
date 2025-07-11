@@ -20,8 +20,11 @@ import {
   SET_GUEST_FORM_ERRORS,
 
   SELECTED_TICKETS,
-  DELETE_SELECTED_TICKETS
+  DELETE_SELECTED_TICKETS,
+  SET_CART_COUPON
 } from './constants';
+
+import { getSelectedTicketsFromStorage, saveSelectedTicketsToStorage } from '../../utils/selectedTickets';
 
 const initialState = {
   isOpen: false,
@@ -29,15 +32,21 @@ const initialState = {
   cartId: null,
   total: 0,
   loading: false,
-  selectedTickets: [],
+  selectedTickets: getSelectedTicketsFromStorage(),
   error: null,
   guestInfo: {},
   showGuestForm: false,
-  guestErrors: {}
+  guestErrors: {},
+  coupon: ''
 };
 
 const cartReducer = (state = initialState, action) => {
   switch (action.type) {
+    case SET_CART_COUPON:
+      return {
+        ...state,
+        coupon: action.payload
+      };
     case SET_GUEST_FORM_ERRORS:
       return {
         ...state,
@@ -51,18 +60,23 @@ const cartReducer = (state = initialState, action) => {
     case SET_GUEST_INFO:
       return {
         ...state,
-        guestInfo: action.payload
+        guestInfo: {...state.guestInfo, ...action.payload}
       }
     case DELETE_SELECTED_TICKETS:
+      const updat = state.selectedTickets.filter(t => t !== action.payload);
+      saveSelectedTicketsToStorage(updat);
       return {
         ...state,
-        selectedTickets: state.selectedTickets.filter(t => t._id !== action.payload)
-      }
+        selectedTickets: updat
+      };
     case SELECTED_TICKETS:
+      const updated = [action.payload, ...state.selectedTickets];
+      saveSelectedTicketsToStorage(updated);
       return {
         ...state,
-        selectedTickets: [action.payload, ...state.selectedTickets]
-      }
+        selectedTickets: updated
+      };
+
     case TOGGLE_CART:
       return {
         ...state,
@@ -98,12 +112,16 @@ const cartReducer = (state = initialState, action) => {
         )
       };
     case CLEAR_CART:
+      localStorage.removeItem('selectedTickets');
       return {
         ...state,
         items: [],
         total: 0,
         cartId: null,
-        selectedTickets: []
+        selectedTickets: [],
+        guestInfo: {},
+        guestErrors: {},
+        showGuestForm: false
       };
     case SET_CART_ITEMS:
       return {

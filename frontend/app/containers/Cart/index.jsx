@@ -11,6 +11,8 @@ import { IoMdClose } from 'react-icons/io';
 import { Navigate } from 'react-router-dom';
 import actions from '../../actions';
 import GuestCheckout from '../Guest/checkout';
+import LoadingIndicator from '../../components/store/LoadingIndicator';
+import Input from '../../components/Common/HtmlTags/Input';
 
 class Cart extends React.PureComponent {
   componentDidMount() {
@@ -48,7 +50,8 @@ class Cart extends React.PureComponent {
       showGuestForm,
       guestInfo,
       handleGuestInputChange,
-      guestErrors
+      guestErrors,
+      coupon
     } = this.props;
 
     const handleUserCheckout = () => {
@@ -74,9 +77,7 @@ class Cart extends React.PureComponent {
           </div>
 
           {loading ? (
-            <div className="cart-loading">
-              <p>Loading cart...</p>
-            </div>
+            <LoadingIndicator />
           ) : items.length === 0 ? (
             <div className="empty-cart">
               <p>Your cart is empty</p>
@@ -133,6 +134,20 @@ class Cart extends React.PureComponent {
                   <span>Total:</span>
                   <span>₦{(total || this.calculateTotal()).toLocaleString()}</span>
                 </div>
+
+                {/* coupon */}
+                {/*<div className="cart-coupon-container">
+                  <Input
+                    value={coupon || ''}
+                    type="text"
+                    className="cart-coupon"
+                    placeholder='Coupon Code Here'>
+                    onInputChange={}
+                  </>
+                  <button onClick={""}>Apply</button>
+                </div>*/}
+
+
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
                   {authenticated ? (
@@ -150,7 +165,7 @@ class Cart extends React.PureComponent {
             </>
           )
           : (
-            <GuestCheckout />
+            <GuestCheckout {...this.props}/>
           )}
         </div>
         
@@ -171,7 +186,8 @@ const mapStateToProps = (state) => {
     error: state.cart.error,
     showGuestForm: state.cart.showGuestForm,
     guestInfo: state.cart.guestInfo,
-    guestErrors: state.cart.guestErrors
+    guestErrors: state.cart.guestErrors,
+    coupon: state.cart.coupon
   };
 };
 

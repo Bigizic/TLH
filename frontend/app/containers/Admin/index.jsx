@@ -39,6 +39,8 @@ import EditGallery from '../../components/Manager/Gallery/Edit';
 
 import AddMedia from '../../components/Manager/Media/Add';
 
+import AdminOrder from '../../components/Manager/Orders/AdminOrders';
+
 import 'bootstrap/dist/css/bootstrap.min.css';
 import '@coreui/coreui/dist/css/coreui.min.css';
 
@@ -78,6 +80,12 @@ const Admin = (props) => {
           <Route path='gallery/edit/:id' element={<EditGallery {...props}/>} />
 
           <Route path='media/add' element={<AddMedia {...props}/>} />
+
+          <Route path='orders/my-orders' element={<AdminOrder {...props} />} />
+
+          {/*<Route path='users' element={<AdminOrder {...props} />} />*/}
+          {/*<Route path='organizers' element={<AdminOrder {...props} />} />*/}
+          {/*<Route path='guests' element={<AdminOrder {...props} />} />*/}
           
           <Route path='*' element={<Page404 />} />
         </Routes>

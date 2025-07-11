@@ -13,6 +13,7 @@ import * as coupon from '../app/containers/Coupon/actions';
 import * as gallery from '../app/containers/Gallery/actions';
 import * as media from '../app/containers/Media/actions';
 import * as cart from '../app/containers/Cart/actions';
+import * as order from '../app/containers/Order/actions';
 
 export default function mapDispatchToProps (dispatch) {
   return bindActionCreators(
@@ -30,6 +31,7 @@ export default function mapDispatchToProps (dispatch) {
       ...gallery,
       ...media,
       ...cart,
+      ...order,
     },
     dispatch
   );

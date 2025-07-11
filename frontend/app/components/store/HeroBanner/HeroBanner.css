@@ -58,6 +58,9 @@
 /*Responsive Design */
 
 @media (max-width: 767px) {
+  .row-banner-btns div {
+    padding: 16px;
+  }
   .hero-banner .row-banner-btns {
     flex-direction: row;
     justify-content: center;

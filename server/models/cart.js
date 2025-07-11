@@ -51,6 +51,11 @@ const CartSchema = new Schema({
     ref: 'User',
     default: null
   },
+  guest: {
+    type: Schema.Types.ObjectId,
+    ref: 'Guest',
+    default: null
+  },
   total: {
     type: Number,
     default: 0

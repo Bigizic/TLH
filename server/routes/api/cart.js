@@ -36,19 +36,28 @@ router.post('/add', async (req, res) => {
 router.get('/:cartId', async (req, res) => {
   try {
     const cartId = req.params.cartId;
-    
-    const cart = await Cart.findById(cartId);
-    
+    const populate = req.query.populate === 'true';
+
+    let cart;
+    if (populate) {
+      cart = await Cart.findById(cartId)
+        .populate('tickets.ticketId')
+        .populate('tickets.eventId')
+        .populate('tickets.coupon');
+    } else {
+      cart = await Cart.findById(cartId);
+    }
+
     if (!cart) {
       return res.status(404).json({ error: 'Cart not found' });
     }
-    
+
     // Check if cart is expired
     if (cart.expiresAt && new Date() > cart.expiresAt) {
       await cart.deleteOne();
       return res.status(400).json({ error: 'Cart has expired' });
     }
-    
+
     return res.status(200).json({
       success: true,
       cart
@@ -59,6 +68,7 @@ router.get('/:cartId', async (req, res) => {
     });
   }
 });
+
 
 // Add item to cart
 router.put('/:cartId/add', async (req, res) => {

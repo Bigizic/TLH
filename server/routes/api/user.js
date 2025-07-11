@@ -118,4 +118,29 @@ router.put('/', auth, async (req, res) => {
   }
 });
 
+router.get('/:id', async(req, res) => {
+  try {
+    const id = req.params.id;
+    if (id) {
+      const user = await User.findById(id).populate('organizer')
+      if (user) {
+        return res.status(200).json({
+          success: true,
+          data: {
+            _id: user._id,
+            name: user.name,
+            email: user.email
+          }
+        })
+      }
+    } else {
+      throw new Error()
+    }
+  } catch (error) {
+    return res.status(400).json({
+      error: 'Your request could not be processed. Please try again.'
+    })
+  }
+})
+
 module.exports = router;

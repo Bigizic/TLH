@@ -9,3 +9,5 @@ export const EMAIL_PROVIDER = {
   Email: 'Email',
   Google: 'Google'
 };
+
+export const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_KEY

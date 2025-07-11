@@ -54,7 +54,7 @@ module.exports = {
     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     callbackURL: process.env.GOOGLE_CALLBACK_URL
   },*/
-  /*paystack: {
+  paystack: {
     apiSecretKey: process.env.PAYSTACK_SECRET_KEY
-  }*/
+  }
 };

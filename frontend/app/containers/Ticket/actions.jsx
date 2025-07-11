@@ -244,3 +244,29 @@ export const getUserTicket = () => {
     }
   }
 }
+
+export const ticketStatusChecker = async (cartId) => {
+  try {
+    const response = await axios.get(`${API_URL}/cart/${cartId}?populate=true`);
+    const cart = response.data.cart;
+
+    for (const item of cart.tickets) {
+      const ticket = item.ticketId;
+      const event = item.eventId;
+
+      // Check if populated and valid
+      if (!ticket || !event) {
+        return false;
+      }
+
+      if (ticket.quantity < 1 || !['Ongoing', 'Upcoming'].includes(event.status)) {
+        return false;
+      }
+    }
+    return true;
+  } catch (error) {
+    console.error('Error checking ticket status:', error);
+    return false;
+  }
+};
+

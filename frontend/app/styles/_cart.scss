@@ -395,6 +395,26 @@
   z-index: 999;
 }
 
+.cart-coupon-container {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  margin: 1em 0em;
+  align-items: center;
+  gap: 1em;
+
+  button {
+    padding: 1em;
+    border-radius: 10px;
+    font-size: 14px;
+    background-color: var(--primary_color);
+    color: #fff;
+    height: fit-content;
+    width: fit-content;
+    border: none;
+  }
+}
+
 /* Animation */
 @keyframes pulse {
   0% {

@@ -4,10 +4,12 @@ const orderSchema = new mongoose.Schema({
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
+    default: null
   },
   guest: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'Guest'
+    ref: 'Guest',
+    default: null
   },
   events: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -22,6 +24,10 @@ const orderSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Coupon'
   },
+  cart: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Cart'
+  },
   finalAmount: {
     type: Number,
     required: true
@@ -34,6 +40,7 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+
   paymentStatus: {
     type: String,
     reuqired: true,
@@ -41,8 +48,19 @@ const orderSchema = new mongoose.Schema({
   paymentMethod: {
     type: String
   },
-  transactionId: {
-    type: String
+  payStackReference: {
+    type: String,
+  },
+  payStackId: {
+    type: String,
+  },
+  paymentFees: {
+    type: String,
+  },
+  
+  status: {
+    type: String,
+    default: false,
   },
   billingEmail: {
     type: String

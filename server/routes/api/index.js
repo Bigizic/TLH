@@ -10,7 +10,8 @@ const coupon = require('./coupon');
 const gallery = require('./gallery');
 const media = require('./media');
 const cart = require('./cart');
-//const order = requrie('./order');
+const guest = require('./guest');
+const order = require('./order');
 //const newsletter = require('./newsletter')
 
 // for static file uploads
@@ -31,5 +32,7 @@ router.use('/coupon', coupon);
 router.use('/gallery', gallery);
 router.use('/media', media);
 router.use('/cart', cart);
+router.use('/guest', guest);
+router.use('/order', order);
 
 module.exports = router;

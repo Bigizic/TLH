@@ -9,6 +9,7 @@ import { API_URL } from '../../constants';
 import { showNotification } from '../Notification/actions';
 import { allFieldsValidation } from '../../utils/validation';
 import handleError from '../../utils/error';
+import { payStackHelper } from '../../components/Paystack';
 
 import {
   TOGGLE_CART,
@@ -26,8 +27,10 @@ import {
   SELECTED_TICKETS,
   DELETE_SELECTED_TICKETS,
   SET_GUEST_FORM_ERRORS,
-  SHOW_GUEST_FORM
+  SHOW_GUEST_FORM,
+  SET_CART_COUPON
 } from './constants';
+import { ticketStatusChecker } from '../Ticket/actions';
 
 // Toggle cart visibility
 export const toggleCart = () => {
@@ -35,6 +38,13 @@ export const toggleCart = () => {
     type: TOGGLE_CART
   };
 };
+
+export const handleCouponChange = (value) => {
+  return {
+    type: SET_CART_COUPON,
+    payload: { coupon: value }
+  }
+}
 
 export const handleGuestInputChange = (name, value) => {
   let formData = {};
@@ -118,26 +128,42 @@ export const initializeCart = () => {
   };
 };
 
-export const addGuest = () => {
+export const addGuest = (navigate) => {
   return async (dispatch, getState) => {
-    const { name, email } = getState().cart.guestInfo;
-    const rules = {
-      name: 'required',
-      email: 'required',
+    dispatch(setCartLoading(true))
+    try {
+      const { name, email } = getState().cart.guestInfo;
+      const cart = getState().cart;
+      const { eventId, ticketId, } = cart.items[0]
+      const rules = {
+        name: 'required',
+        email: 'required',
+      }
+      const guestForm = {
+        name,
+        email,
+        eventId,
+        ticketId
+      }
+      const { isValid, errors } = allFieldsValidation(guestForm, rules, {
+       'required.name': 'Name is required.',
+        'required.email': 'Email is required.',
+      })
+      if (!isValid) {
+        return dispatch({ type: SET_GUEST_FORM_ERRORS, payload: errors });
+      }
+      // add guest
+      const guest = await axios.post(`${API_URL}/guest/add`, guestForm);
+      if (guest.status === 200) {
+        Promise.all([]).then(() => {
+          dispatch(checkout(navigate, guest.data.guest));
+        });
+      }
+    } catch (error) {
+      dispatch(handleError(error, 'Error checking out as guest! Try again later'))
+    } finally {
+      dispatch(setCartLoading(false))
     }
-    const guestForm = {
-      name,
-      email
-    }
-    const { isValid, errors } = allFieldsValidation(guestForm, rules, {
-      'required.name': 'Name is required.',
-      'required.email': 'Email is required.',
-    })
-    if (!isValid) {
-      return dispatch({ type: SET_GUEST_FORM_ERRORS, payload: errors });
-    }
-    const response = await axios.post(`${API_URL}/guest/add`, guestForm);
-    clearCart();
   }
 };
 
@@ -307,11 +333,11 @@ export const clearCart = () => {
     try {
       dispatch(setCartLoading(true));
       
-      const cartId = localStorage.getItem(CART_ID);
+      /*const cartId = localStorage.getItem(CART_ID);
       
       if (cartId) {
         await axios.delete(`${API_URL}/cart/${cartId}`);
-      }
+      }*/
       
       localStorage.removeItem(CART_ID);
       
@@ -328,69 +354,52 @@ export const clearCart = () => {
   };
 };
 
-// Process guest checkout
-export const processGuestCheckout = (guestInfo) => {
+export const checkout = (navigate, guest=null) => {
   return async (dispatch, getState) => {
+    dispatch(setCartLoading(true));
     try {
-      dispatch(setCartLoading(true));
-      
-      const { items, total, cartId } = getState().cart;
-      
-      if (!items.length) {
-        dispatch(showNotification('error', 'Your cart is empty'));
-        return null;
-      }
-      
-      // Validate guest info
-      if (!guestInfo.email || !guestInfo.name) {
-        dispatch(showNotification('error', 'Please provide your name and email'));
-        return null;
-      }
-      
-      // In a real implementation, you would send this to your backend
-      // For now, we'll simulate a successful order
-      const orderId = `guest-${Date.now()}`;
-      
-      // Clear cart after successful order
-      dispatch(clearCart());
-      
-      return orderId;
-    } catch (error) {
-      handleError(error, dispatch);
-      return null;
-    } finally {
-      dispatch(setCartLoading(false));
-    }
-  };
-};
+      const { email, name, _id } = guest;
+      const user = getState().account.user;
+      const cart = getState().cart;
+      const { eventId, ticketId, discountPrice, price } = cart.items[0]
+      const { cartId, total } = cart
+      const userEmail = user.email
+      const user_name = user.name
+      const userId = user._id
 
-// Process user checkout
-export const processUserCheckout = () => {
-  return async (dispatch, getState) => {
-    try {
-      dispatch(setCartLoading(true));
-      
-      const { items, total, cartId } = getState().cart;
-      const { user } = getState().account;
-      
-      if (!items.length) {
-        dispatch(showNotification('error', 'Your cart is empty'));
-        return null;
-      }
-      
-      // In a real implementation, you would send this to your backend
-      // For now, we'll simulate a successful order
-      const orderId = `user-${Date.now()}`;
-      
-      // Clear cart after successful order
+      dispatch(toggleCart());
       dispatch(clearCart());
-      
-      return orderId;
+
+      // before creating an order, check if every ticket in the db is
+      // active or the quantity is greater than 0
+      const checkTIcketStatus = await ticketStatusChecker(cartId);
+
+      if (!checkTIcketStatus) {
+        throw new Error('Cannot buy ticket at this time, try again!!')
+      }
+
+
+      const ps = await payStackHelper({
+        cart: cartId,
+        user: { email: userEmail, name: user_name, _id: userId},
+        guest: { email, name, _id },
+        events: eventId,
+        tickets: ticketId,
+        finalAmount: total,
+        discountPrice: discountPrice,
+        amountBeforeDiscount: price,
+        billingEmail: email !== undefined || null ? email : userEmail,
+      })
+
+      if (ps && ps.status === 200) {
+        // payment successful
+        // redirect to confirmation page
+        navigate(`/order/success/${guest.name ? 'guest-' + ps.data.order._id : ps.data.order._id}`)
+      }
     } catch (error) {
-      handleError(error, dispatch);
-      return null;
+      handleError(error, dispatch)
     } finally {
       dispatch(setCartLoading(false));
     }
-  };
-};
+  }
+}

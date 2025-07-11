@@ -1,23 +1,20 @@
-import React from "react";
-import actions from "../../actions";
-import { withRouter } from "../../withRouter";
-import { connect } from "react-redux";
 import Input from '../../components/Common/HtmlTags/Input';
+import { useNavigate } from "react-router-dom";
 
-class GuestCheckout extends React.PureComponent {
-    render () {
-        const {
+const GuestCheckout = (props) => {
+    const {
             authenticated,
             showGuestForm,
             guestInfo,
             guestErrors,
             handleGuestInputChange,
             addGuest
-        } = this.props;
-        const handleGuestCheckout = (e) => {
-            e.preventDefault();
-            addGuest();
-        }
+        } = props;
+    const navigate = useNavigate();
+    const handleGuestCheckout = (e) => {
+        e.preventDefault();
+        addGuest(navigate);
+    }
         return (
             <>
                 {!authenticated && showGuestForm && (
@@ -30,7 +27,7 @@ class GuestCheckout extends React.PureComponent {
                           name="email"
                           label="email"
                           value={guestInfo.email || ''} 
-                          onChange={(n, v) => handleGuestInputChange(n, v)}
+                          onInputChange={(n, v) => handleGuestInputChange(n, v)}
                           error={guestErrors && guestErrors.email}
                         />
                       </div>
@@ -40,7 +37,7 @@ class GuestCheckout extends React.PureComponent {
                           name="name"
                           label="name"
                           value={guestInfo.name || ''}
-                          onChange={(n, v) => handleGuestInputChange(n, v)}
+                          onInputChange={(n, v) => handleGuestInputChange(n, v)}
                           error={guestErrors && guestErrors.name}
                         />
                       </div>
@@ -50,22 +47,7 @@ class GuestCheckout extends React.PureComponent {
                 )}
             </>
         )
-    }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    authenticated: state.authentication.authenticated,
-    isOpen: state.cart.isOpen,
-    items: state.cart.items,
-    total: state.cart.total,
-    loading: state.cart.loading,
-    error: state.cart.error,
-    showGuestForm: state.cart.showGuestForm,
-    guestInfo: state.cart.guestInfo,
-    guestErrors: state.cart.guestErrors
-  };
-};
-
-export default connect(mapStateToProps, actions)(GuestCheckout);
+export default GuestCheckout;
 

@@ -1,0 +1,26 @@
+.order-success-container {
+    padding: 10em 0em;
+    display: flex;
+    justify-content: center;
+    @include media-breakpoint-down(md) {
+        padding: 10em 2em;
+    }
+
+    .order-success-card {
+        display: flex;
+        gap: 2em;
+        @include media-breakpoint-down(md) {
+            flex-direction: column;
+            gap: 2em;
+        }
+    }
+    .order-success-text {
+        color: #fff;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1em;
+        flex-wrap: wrap;
+    }
+}

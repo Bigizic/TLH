@@ -11,6 +11,7 @@ import ticket from './containers/Ticket/reducer';
 import coupon from './containers/Coupon/reducer';
 import gallery from './containers/Gallery/reducer';
 import media from './containers/Media/reducer';
+import order from './containers/Order/reducer';
 
 const rootReducer = combineReducers({
   account,
@@ -24,6 +25,7 @@ const rootReducer = combineReducers({
   ticket,
   coupon,
   gallery,
-  media
+  media,
+  order
 });
 export default rootReducer;
