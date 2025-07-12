@@ -100,7 +100,10 @@ export const addCoupon = (navigate) => {
     try {
       const rules = {
         code: 'required',
-        percentage: 'required|numeric|min:1|max:100',
+        type: 'required',
+        amount: 'required',
+        appliesTo: 'required',
+        percentage: 'required',
         quantity: 'required|numeric|min:1',
         userLimit: 'required|numeric|min:1'
       };
@@ -108,7 +111,10 @@ export const addCoupon = (navigate) => {
 
       const newCoupon = {
         code: coupon.code,
-        percentage: coupon.percentage,
+        type: coupon.type,
+        amount: coupon.amount || 0,
+        appliesTo: coupon.appliesTo,
+        percentage: coupon.percentage || 0,
         quantity: coupon.quantity,
         userLimit: coupon.userLimit,
         active: coupon.active !== undefined ? coupon.active : true
@@ -116,6 +122,9 @@ export const addCoupon = (navigate) => {
 
       const { isValid, errors } = allFieldsValidation(newCoupon, rules, {
         'required.code': 'Coupon code is required.',
+        'required.type': 'Select a coupon type',
+        'required.amount': 'Coupon amount is requried',
+        'required.appliesTo': 'This field is required',
         'required.percentage': 'Discount percentage is required.',
         'required.quantity': 'Quantity is required.',
         'required.userLimit': 'User limit is required.',
@@ -147,7 +156,10 @@ export const updateCoupon = (navigate) => {
     try {
       const rules = {
         code: 'required',
-        percentage: 'required|numeric|min:1|max:100',
+        type: 'required',
+        amount: 'required',
+        appliesTo: 'required',
+        percentage: 'required',
         quantity: 'required|numeric|min:1',
         userLimit: 'required|numeric|min:1'
       };
@@ -156,7 +168,10 @@ export const updateCoupon = (navigate) => {
 
       const updatedCoupon = {
         code: coupon.code,
-        percentage: coupon.percentage,
+        type: coupon.type,
+        amount: coupon.amount || 0,
+        appliesTo: coupon.appliesTo,
+        percentage: coupon.percentage || 0,
         quantity: coupon.quantity,
         userLimit: coupon.userLimit,
         active: coupon.active !== undefined ? coupon.active : true
@@ -164,6 +179,9 @@ export const updateCoupon = (navigate) => {
 
       const { isValid, errors } = allFieldsValidation(updatedCoupon, rules, {
         'required.code': 'Coupon code is required.',
+        'required.type': 'Select a coupon type',
+        'required.amount': 'Coupon amount is requried',
+        'required.appliesTo': 'This field is required',
         'required.percentage': 'Discount percentage is required.',
         'required.quantity': 'Quantity is required.',
         'required.userLimit': 'User limit is required.',

@@ -24,3 +24,26 @@
         flex-wrap: wrap;
     }
 }
+
+.order-view-container {
+    display: flex;
+    flex-direction: column;
+
+    @include media-breakpoint-up(md) {
+        flex-direction: row;
+        .first-order-view {
+            margin: 0;
+            width: 50%;
+        }
+        .second-order-view {
+            margin: 0;
+            width: 50%;
+        }
+    }
+
+    .second-order-view {
+        @include media-breakpoint-down(md) {
+            margin-top: 2em;
+        }
+    }
+}

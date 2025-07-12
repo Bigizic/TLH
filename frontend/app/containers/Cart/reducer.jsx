@@ -37,7 +37,9 @@ const initialState = {
   guestInfo: {},
   showGuestForm: false,
   guestErrors: {},
-  coupon: ''
+  coupon: {
+    code: ''
+  }
 };
 
 const cartReducer = (state = initialState, action) => {
@@ -45,7 +47,7 @@ const cartReducer = (state = initialState, action) => {
     case SET_CART_COUPON:
       return {
         ...state,
-        coupon: action.payload
+        coupon: {...state.coupon, ...action.payload}
       };
     case SET_GUEST_FORM_ERRORS:
       return {
@@ -121,6 +123,9 @@ const cartReducer = (state = initialState, action) => {
         selectedTickets: [],
         guestInfo: {},
         guestErrors: {},
+        coupon: {
+          code: ''
+        },
         showGuestForm: false
       };
     case SET_CART_ITEMS:

@@ -1,9 +1,11 @@
 import Paystack from '@paystack/inline-js';
 import axios from 'axios';
+import { setCartLoading } from '../../containers/Cart/actions';
 
 import { API_URL, PAYSTACK_KEY } from '../../constants';
 
-export const payStackHelper = async (props) => {
+export const payStackHelper = async (props, dispatch) => {
+  dispatch(setCartLoading(true));
   const {
     cart,
     user,
@@ -48,6 +50,7 @@ export const payStackHelper = async (props) => {
             payStackId: id,
             billingEmail,
           });
+          dispatch(setCartLoading(false));
         } catch (error) {
           reject(new Error(`Payment failed: ${error.message}`));
         }

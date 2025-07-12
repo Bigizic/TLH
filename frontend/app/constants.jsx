@@ -10,4 +10,14 @@ export const EMAIL_PROVIDER = {
   Google: 'Google'
 };
 
+export const COUPON_TYPE = [
+  { value: "FIXED", label: "Fixed" },
+  { value: "PERCENTAGE", label: "Percentage" }
+]
+
+export const COUPON_APPLY = [
+  { value: "ONE", label: "One" },
+  { value: "MULTIPLE", label: "Multiple" }
+]
+
 export const PAYSTACK_KEY = import.meta.env.VITE_PAYSTACK_KEY

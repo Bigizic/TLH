@@ -346,7 +346,7 @@
 
 /* Cart Footer */
 .cart-footer {
-  padding: 20px;
+  padding: 20px 20px 40px 20px;
   border-top: 1px solid #eee;
 }
 
@@ -396,12 +396,16 @@
 }
 
 .cart-coupon-container {
-  display: flex;
-  flex-direction: row;
-  width: 100%;
-  margin: 1em 0em;
-  align-items: center;
-  gap: 1em;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    margin: 2em 0em;
+    align-items: center;
+    justify-content: space-between;
+
+    .input-box {
+      width: 80%;
+    }
 
   button {
     padding: 1em;

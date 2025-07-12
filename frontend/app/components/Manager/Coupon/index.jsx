@@ -145,6 +145,9 @@ const ManagerCouponHelper = (props) => {
                   </span>
                   <CCardText as={'div'} className="copon-card-text-container">
                     <div className='copon-card-text'>
+                    <strong>Type:</strong> {coupon.type || 'N/A'}
+                    </div>
+                    <div className='copon-card-text'>
                     <strong>Qty:</strong> {coupon.quantity}
                     </div>
 
@@ -157,11 +160,19 @@ const ManagerCouponHelper = (props) => {
                     </div>
 
                     <div className='copon-card-text'>
-                    <strong>Discount:</strong> {coupon.percentage}% Off
+                    {coupon.type === 'Percentage' ? (
+                      <>
+                      <strong>Percentage Discount:</strong> {coupon.percentage}% Off
+                      </>
+                    ) : (
+                      <>
+                      <strong>Fixed Discount:</strong> -₦{coupon.amount?.toLocaleString() || 0} Off
+                      </>
+                    )}
                     </div>
 
                     <div className='copon-card-text'>
-                    <strong>Ticket Types:</strong> {coupon.ticket?.length > 0 ? coupon.ticket.map(t => t.type).join(', ') : 'N/A'}
+                    <strong>Applies To:</strong> {coupon.appliesTo} Ticket
                     </div>
                   </CCardText>
                 </CCardBody>

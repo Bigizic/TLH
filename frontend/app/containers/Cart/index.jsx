@@ -32,7 +32,10 @@ const CartViewer = (props) => {
       handleGuestInputChange,
       guestErrors,
       coupon,
-      updateCartItem
+      updateCartItem,
+
+      handleCouponChange,
+      applyCoupon
   } = props;
   const navigate = useNavigate();
 
@@ -134,16 +137,17 @@ const CartViewer = (props) => {
                 </div>
 
                 {/* coupon */}
-                {/*<div className="cart-coupon-container">
+                <div className="cart-coupon-container">
                   <Input
-                    value={coupon || ''}
+                    value={coupon.code || ''}
                     type="text"
                     className="cart-coupon"
-                    placeholder='Coupon Code Here'>
-                    onInputChange={}
-                  </>
-                  <button onClick={""}>Apply</button>
-                </div>*/}
+                    name="code"
+                    placeholder='Coupon Code Here'
+                    onInputChange={(n, v) => handleCouponChange(n, v)}
+                  />
+                  <button onClick={applyCoupon}>Apply</button>
+                </div>
 
 
                 <div className="cart-actions">

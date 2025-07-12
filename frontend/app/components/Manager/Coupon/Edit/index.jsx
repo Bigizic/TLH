@@ -11,6 +11,8 @@ import { withRouter } from '../../../../withRouter';
 import { connect } from 'react-redux';
 import actions from '../../../../actions';
 import { useNavigate } from 'react-router-dom';
+import { COUPON_TYPE, COUPON_APPLY } from '../../../../constants';
+import { couponSelectFinder } from '../../../../utils/couponSelectFinder';
 
 const EditCouponForm = (props) => {
   const {
@@ -26,6 +28,12 @@ const EditCouponForm = (props) => {
   } = props;
 
   const navigate = useNavigate();
+  let couponType;
+  if (coupon.type && coupon?.type?.value) {
+    couponType = Object.values(coupon?.type)[1]
+  } else {
+    couponType = coupon?.type
+  }
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -62,16 +70,49 @@ const EditCouponForm = (props) => {
             />
           </Col>
 
-          {/* Discount Percentage */}
+          <Col className={`${isLightMode ? 'p-black' : 'p-white'}`} xs='12' lg='6'>
+            <SelectOption
+              error={couponEditFormErrors.type}
+              label='Type'
+              placeholder='Select coupon type e.g (Percentage)'
+              prevValue={couponSelectFinder(COUPON_TYPE, coupon.type) || ''}
+              value={coupon.type || ''}
+              multi={false}
+              options={COUPON_TYPE}
+              handleSelectChange={(v) => couponEditChange('type', v)}
+            />
+          </Col>
+
+          {/* Discount Percentage or amount based on coupon type */}
           <Col className={`${isLightMode ? 'p-black' : 'p-white'}`} xs='12' lg='6'>
             <Input
               type='number'
-              error={couponEditFormErrors.percentage}
-              label='Discount Percentage'
-              name='percentage'
-              placeholder='Enter discount percentage'
-              value={coupon.percentage || ''}
-              onInputChange={couponEditChange}
+              error={couponEditFormErrors.percentage || couponEditFormErrors.amount}
+              label={couponType === 'Percentage' ? 'Discount Percentage' : 'Discount Amount'}
+              name={couponType === 'Percentage' ? 'percentage' : 'amount'}
+              placeholder={couponType === 'Percentage' ? 'Enter discount percentage' : 'Enter discount amount'}
+              value={(couponType === 'Percentage' ? coupon?.percentage : coupon?.amount) || '' }
+              onInputChange={(name, value) => couponEditChange(name, value)}
+            />
+          </Col>
+
+          {/* where to apply coupon */}
+          <Col className={`${isLightMode ? 'p-black' : 'p-white'}`} xs='12' lg='6'>
+            <div className="alert alert-info" role="alert">
+              Selecting <strong>One</strong> applies the discount to a single ticket in the cart<br />
+              (e.g., only one ticket will receive the discount).<br />
+              Selecting <strong>Multiple</strong> applies the discount to all applicable tickets<br />
+              in the cart (e.g., if a user has 4 tickets, each one will receive the discount).
+            </div>
+            <SelectOption
+              error={couponEditFormErrors.type}
+              label='Apply to?'
+              placeholder='Apply to multiple tickets or single?'
+              prevValue={couponSelectFinder(COUPON_APPLY, coupon.appliesTo) || ''}
+              value={coupon.appliesTo || ''}
+              multi={false}
+              options={COUPON_APPLY}
+              handleSelectChange={(v) => couponEditChange('appliesTo', v)}
             />
           </Col>
 
@@ -109,7 +150,7 @@ const EditCouponForm = (props) => {
               name='usedCount'
               placeholder='Number of times used'
               value={coupon.usedCount || 0}
-              disabled={true}
+              disabled
               onInputChange={() => {}}
             />
           </Col>
@@ -128,27 +169,27 @@ const EditCouponForm = (props) => {
         </Row>
       </form>
       <Row>
-          <div className='edit-coupon-actions'>
-            <Button onClick={handleSubmit} style={{ padding: '10px 20px' }} text='Update Coupon' />
-            <Button
-              onClick={() => deleteCoupon(coupon._id, navigate)}
-              style={{ padding: '10px 20px' }}
-              text='Delete Coupon'
-            />
-          </div>
-        </Row>
+        <div className='edit-coupon-actions'>
+          <Button onClick={handleSubmit} style={{ padding: '10px 20px' }} text='Update Coupon' />
+          <Button
+            onClick={() => deleteCoupon(coupon._id, navigate)}
+            style={{ padding: '10px 20px' }}
+            text='Delete Coupon'
+          />
+        </div>
+      </Row>
     </div>
   );
 };
 
 class EditCoupon extends React.PureComponent {
-  componentDidMount() {
+  componentDidMount () {
     this.props.resetCoupon();
     const couponId = this.props.match.params.id;
     this.props.fetchCoupon(couponId);
   }
 
-  componentDidUpdate(prevProps) {
+  componentDidUpdate (prevProps) {
     if (this.props.match.params.id !== prevProps.match.params.id) {
       this.props.resetCoupon();
       const couponId = this.props.match.params.id;
@@ -156,7 +197,7 @@ class EditCoupon extends React.PureComponent {
     }
   }
 
-  render() {
+  render () {
     return (
       <EditCouponForm {...this.props} />
     );

@@ -40,10 +40,12 @@ export const toggleCart = () => {
   };
 };
 
-export const handleCouponChange = (value) => {
+export const handleCouponChange = (name, value) => {
+  let formData = {};
+  formData[name] = value;
   return {
     type: SET_CART_COUPON,
-    payload: { coupon: value }
+    payload: formData
   }
 }
 
@@ -95,6 +97,38 @@ export const setGuestForm = (v) => {
   return {
     type: SHOW_GUEST_FORM,
     payload: v
+  }
+}
+
+export const applyCoupon = () => {
+  return async(dispatch, getState) => {
+    dispatch(setCartLoading(true));
+    try {
+      const cart = getState().cart;
+      const coupon = cart.coupon;
+      const cartItems = cart.items;
+      if (coupon?.code?.length < 1) {
+        return handleError({ message: 'Enter a valid coupon' }, dispatch)
+      }
+      const code = coupon.code;
+      const tickets = cartItems.map(item => item.ticketId);
+      const events = cartItems.map(item => item.eventId);
+      const requestData = {
+        code,
+        tickets,
+        events
+      }
+      console.log(requestData);
+      // confirm coupon
+      // const response = await axios.post(`${API_URL}/coupon/validate`, requestData);
+
+
+      console.log(code)
+    } catch (error) {
+      handleError(error, dispatch);
+    } finally {
+      dispatch(setCartLoading(false));
+    }
   }
 }
 
@@ -369,7 +403,11 @@ export const checkout = (navigate, guest=null) => {
       }
       const user = getState().account.user;
       const cart = getState().cart;
-      const { eventId, ticketId, discountPrice, price } = cart.items[0]
+      const cartItems = cart.items || [];
+      const ticketIds = cartItems.map(item => item.ticketId);
+      const eventIds = cartItems.map(item => item.eventId);
+      const price = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const discountPrice = cartItems.reduce((sum, item) => sum + item.discountPrice, 0);
       const { cartId, total } = cart
       const userEmail = user.email
       const userId = user._id
@@ -396,13 +434,13 @@ export const checkout = (navigate, guest=null) => {
         cart: cartId,
         user: { email: userEmail, name: user_name, _id: userId},
         guest: { email, name, _id },
-        events: eventId,
-        tickets: ticketId,
+        events: eventIds,
+        tickets: ticketIds,
         finalAmount: total,
         discountPrice: discountPrice,
         amountBeforeDiscount: price,
         billingEmail: email !== undefined || null ? email : userEmail,
-      })
+      }, dispatch)
 
       if (ps && ps.status === 200) {
         // payment successful

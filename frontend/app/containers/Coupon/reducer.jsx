@@ -28,6 +28,9 @@ const initialState = {
   couponsSelect: [],
   couponFormData: {
     code: '',
+    type: '',
+    amount: '',
+    appliesTo: '',
     percentage: '',
     quantity: '',
     userLimit: '',
@@ -107,6 +110,9 @@ const couponReducer = (state = initialState, action) => {
         ...state,
         couponFormData: {
           code: '',
+          type: '',
+          amount: '',
+          appliesTo: '',
           percentage: '',
           quantity: '',
           userLimit: '',

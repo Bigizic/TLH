@@ -68,7 +68,7 @@ const ManagerOrderList = (props) => {
       </div>
 
 
-      <CRow className='gy-4 w-100'>
+      <CRow className='gy-4'>
       {currentOrders.map((order, idx) => (
        <CCol md={6} key={idx}>
         <Link to={`/dashboard/orders/${order._id}`}>

@@ -39,4 +39,14 @@ exports.EVENT_STATUS = {
     Ended: 'Ended'
 }
 
+exports.COUPON_TYPE = {
+  Fixed: 'Fixed',
+  Percentage: 'Percentage'
+}
+
+exports.COUPON_APPLY = {
+  One: 'One',
+  Multiple: 'Multiple'
+}
+
 exports.JWT_COOKIE = 'x-jwt-cookie';

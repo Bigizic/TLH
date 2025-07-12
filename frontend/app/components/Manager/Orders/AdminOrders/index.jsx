@@ -48,7 +48,7 @@ const ManagerOrderList = (props) => {
         <h2 className={`${isLightMode ? 'p-black': 'p-white'} font-size-20`}>{orders.length} Orders</h2>
 
 
-      <CRow className='gy-4 w-100'>
+      <CRow className='gy-4'>
       {currentOrders.map((order, idx) => (
        <CCol md={6} key={idx}>
         <Link to={`/dashboard/orders/${order._id}`}>

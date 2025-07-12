@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { COUPON_TYPE, COUPON_APPLY } = require('../utils/constants');
 
 const couponSchema = new mongoose.Schema({
   code: {
@@ -8,13 +9,21 @@ const couponSchema = new mongoose.Schema({
     uppercase: true,
     trim: true
   },
+  type: {
+    type: String,
+    required: true,
+    enum: Object.values(COUPON_TYPE)
+  },
+  amount: {
+    type: Number,
+  },
   percentage: {
     type: Number,
-    required: true
   },
-  discountPrice: {
-    type: Number,
-    default: 0
+  appliesTo: {
+    type: String,
+    default: COUPON_APPLY.One,
+    enum: Object.values(COUPON_APPLY)
   },
   event: [{
     type: mongoose.Schema.Types.ObjectId,
@@ -44,6 +53,10 @@ const couponSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
   },
+  hasUsed: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User'
+  }],
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now }
 });
@@ -51,6 +64,12 @@ const couponSchema = new mongoose.Schema({
 // Automatically update `updatedAt` on save
 couponSchema.pre('save', function (next) {
   this.updatedAt = new Date();
+
+  // Disable coupon if quantity is 0
+  if (this.quantity !== null && this.quantity <= 0) {
+    this.active = false;
+  }
+
   next();
 });
 

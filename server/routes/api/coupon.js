@@ -150,9 +150,12 @@ router.post(
   role.check(ROLES.Admin, ROLES.Organizer),
   async (req, res) => {
     try {
-      const {
+      let {
         code,
-        percentage,
+        amount = 0,
+        percentage = 0,
+        type,
+        appliesTo,
         quantity,
         userLimit,
         active = true
@@ -160,7 +163,7 @@ router.post(
 
       const user = req.user._id;
 
-      if (!code || !percentage || !quantity || !userLimit) {
+      if (!code || !quantity || !userLimit) {
         return res.status(400).json({ error: 'All required fields must be filled.' });
       }
 
@@ -169,11 +172,15 @@ router.post(
       if (existingCoupon) {
         return res.status(400).json({ error: 'A coupon with this code already exists.' });
       }
-
-      const discountPrice = percentage;
+      type = type.label;
+      appliesTo = appliesTo.label;
+      
 
       const coupon = new Coupon({
         code: code.toUpperCase(),
+        amount,
+        type,
+        appliesTo,
         percentage,
         quantity,
         userLimit,
@@ -204,15 +211,18 @@ router.put(
   async (req, res) => {
     try {
       const couponId = req.params.id;
-      const {
+      let {
         code,
-        percentage,
+        type,
+        amount = 0,
+        percentage = 0,
+        appliesTo,
         quantity,
         userLimit,
         active
       } = req.body;
 
-      if (!code || !percentage || !quantity || !userLimit) {
+      if (!code || !quantity || !userLimit) {
         return res.status(400).json({ error: 'All required fields must be filled.' });
       }
 
@@ -234,11 +244,15 @@ router.put(
       if (existingCoupon) {
         return res.status(400).json({ error: 'A coupon with this code already exists.' });
       }
+      type = type?.label ? type.label : type;
+      appliesTo = appliesTo?.label ? appliesTo.label : appliesTo;
 
       // Update coupon fields
       coupon.code = code.toUpperCase();
+      coupon.type = type;
+      coupon.appliesTo = appliesTo;
       coupon.percentage = percentage;
-      coupon.discountPrice = percentage;
+      coupon.amount = amount;
       coupon.quantity = quantity;
       coupon.userLimit = userLimit;
       coupon.active = active !== undefined ? active : coupon.active;
@@ -257,6 +271,62 @@ router.put(
     }
   }
 );
+
+// validate a coupon
+router.post('/validate', auth, async (req, res) => {
+  try {
+    const { code, tickets = [], events = [] } = req.body;
+    const user = req.user;
+
+    if (!code) {
+      return res.status(400).json({ error: 'Coupon code is required.' });
+    }
+
+    const coupon = await Coupon.findOne({ code: code.trim().toUpperCase() })
+      .populate('event')
+      .populate('ticket');
+
+    if (!coupon) {
+      return res.status(404).json({ error: 'Invalid coupon code.' });
+    }
+
+    if (!coupon.active) {
+      return res.status(400).json({ error: 'This coupon is not active.' });
+    }
+
+    if (!coupon.userLimit || coupon.userLimit < 1) {
+      return res.status(400).json({ error: 'This coupon does not permit usage.' });
+    }
+
+    // Find the first matching ticket
+    const matchedTicket = tickets.find(tId => coupon.ticket.some(ct => ct._id.toString() === tId));
+    if (coupon.ticket.length && !matchedTicket) {
+      return res.status(400).json({ error: 'This coupon is not valid for any selected ticket.' });
+    }
+
+    // Find the first matching event
+    const matchedEvent = events.find(eId => coupon.event.some(ce => ce._id.toString() === eId));
+    if (coupon.event.length && !matchedEvent) {
+      return res.status(400).json({ error: 'This coupon is not valid for any selected event.' });
+    }
+
+    // Count user usage
+    const usageCount = coupon.hasUsed.filter(uid => uid.toString() === user._id.toString()).length;
+    if (usageCount >= coupon.userLimit) {
+      return res.status(400).json({ error: 'You have already used this coupon the maximum number of times allowed.' });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: 'Coupon is valid.',
+      discount: coupon.percentage,
+      couponId: coupon._id
+    });
+  } catch (error) {
+    console.error('Validate coupon error:', error);
+    return res.status(500).json({ error: 'Error validating coupon.' });
+  }
+});
 
 // DELETE /coupon/:id - Delete coupon
 router.delete(
