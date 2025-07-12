@@ -18,9 +18,14 @@ import { connect } from 'react-redux';
 import ResolveImage from '../../../store/ResolveImage';
 import actions from '../../../../actions';
 import { formatDate } from '../../../../utils/formatDate';
+import TopSlideConfirmModal from '../../../store/ConfirmModal';
 
 const OrderViewer = (props) => {
-  const { order = {}, user, isLightMode, orderIsLoading } = props;
+  const { order = {}, user,
+          isLightMode, orderIsLoading,
+          setDeleteOrderVisibility, deleteOrderVisibility,
+          deleteOrder
+        } = props;
   const navigate = useNavigate();
 
   const isAdmin = user?.role === ROLES.Admin;
@@ -134,7 +139,7 @@ const OrderViewer = (props) => {
 
         <CRow className='second-order-view'>
           <CCol>
-            <CCard>
+            <CCard className={`${isLightMode ? 'bg-white p-black' : 'bg-black p-white border'}`}>
               <CCardBody>
                 <h2>Cart Details</h2>
                 {order?.cart?.tickets?.length > 0
@@ -179,6 +184,20 @@ const OrderViewer = (props) => {
               </CCardBody>
             </CCard>
           </CCol>
+                {isAdmin && (
+                  <>
+                    <CRow>
+                      <Button onClick={() => setDeleteOrderVisibility(true)} text={"Delete order"} cls="text-danger mt-2"/>
+                    </CRow>
+                    <TopSlideConfirmModal
+                      visible={deleteOrderVisibility}
+                      text={"Confirm to delete order"}
+                      onConfirm={(v) => deleteOrder(v, navigate)}
+                      onClose={() => setDeleteOrderVisibility(false)}
+                      confirmValue={order._id}
+                    />
+                  </>
+                )}
         </CRow>
       </div>
     </div>
@@ -209,7 +228,8 @@ const mapStateToProps = state => ({
   user: state.account.user,
   order: state.order.order,
   isLightMode: state.dashboard.isLightMode,
-  orderIsLoading: state.order.isLoading
+  orderIsLoading: state.order.isLoading,
+  deleteOrderVisibility: state.order.deleteOrderVisibility
 });
 
 export default connect(mapStateToProps, actions)(withRouter(ViewOrder));

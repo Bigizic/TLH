@@ -2,12 +2,20 @@ import {
   SET_IS_LOADING,
   FETCH_ORDER,
   FETCH_ORDERS,
-  FETCH_USER_ORDERS
+  FETCH_USER_ORDERS,
+  SET_DELETE_ORDER
 } from './constants';
 import axios from 'axios';
 import { API_URL } from '../../constants';
 import { showNotification } from '../Notification/actions';
 import handleError from '../../utils/error';
+
+export const setDeleteOrderVisibility = (v) => {
+  return {
+    type: SET_DELETE_ORDER,
+    payload: v
+  }
+}
 
 export const setOrderLoading = (v) => {
   return {
@@ -73,3 +81,20 @@ export const fetchOrder = (id) => {
   }
 }
 
+export const deleteOrder = (id, navigate) => {
+  return async(dispatch) => {
+    dispatch(setOrderLoading(true))
+    try {
+      const order = await axios.delete(`${API_URL}/order/id/${id}`);
+      if (order.status === 200) {
+        dispatch(setDeleteOrderVisibility(false))
+        dispatch(showNotification('success', order.data.message))
+        navigate(-1)
+      }
+    } catch {
+      handleError(error, dispatch);
+    } finally {
+      dispatch(setOrderLoading(false))
+    }
+  }
+}

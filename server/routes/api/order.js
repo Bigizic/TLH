@@ -379,6 +379,42 @@ router.get(
   }
 });
 
+// DELETE /order/id/:id
+router.delete('/id/:id', auth, async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const currentUser = req.user;
+
+    const order = await Order.findById(orderId)
+      .populate({
+        path: 'cart',
+        populate: {
+          path: 'tickets.ticketId'
+        }
+      });
+
+    if (!order) {
+      return res.status(404).json({ message: 'Order not found.' });
+    }
+
+    // Admins only can delete orders
+    if (currentUser.role !== ROLES.Admin) {
+      return res.status(403).json({ message: 'Unauthorized to delete this order.' });
+    }
+
+    if (order.cart && order.cart.tickets && order.cart.tickets.length > 0) {
+      await increaseQuantity(order.cart.tickets);
+    }
+
+    // Delete the order
+    await order.deleteOne();
+
+    return res.status(200).json({ message: 'Order deleted and tickets restocked successfully.' });
+  } catch (error) {
+    return res.status(500).json({ message: 'An error occurred while deleting the order.' });
+  }
+});
+
 
 
 const increaseQuantity = (tickets) => {

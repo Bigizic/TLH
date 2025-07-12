@@ -149,7 +149,6 @@ const CartViewer = (props) => {
                   <button onClick={applyCoupon}>Apply</button>
                 </div>
 
-
                 <div className="cart-actions">
                   <button className="clear-cart" onClick={clearCart}>Clear Cart</button>
                   {authenticated ? (

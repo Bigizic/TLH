@@ -86,7 +86,7 @@ const ManagerOrderList = (props) => {
         </CCardTitle>
 
         <CBadge color={order.paymentStatus === 'success' ? 'success' : 'danger'} className='mb-2'>
-          {order.paymentStatus}
+          {order.paymentStatus || order?.status === 'false' && "There's an issue with this payment"}
         </CBadge>
         <CRow>
           <CCol className='mb-2'>
