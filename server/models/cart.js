@@ -38,6 +38,9 @@ const CartItemSchema = new Schema({
     type: Boolean,
     default: false
   },
+  discountAmount: {
+    type: Number,
+  },
   discountPrice: {
     type: Number
   }

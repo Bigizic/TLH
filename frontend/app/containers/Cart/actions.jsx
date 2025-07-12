@@ -236,6 +236,7 @@ export const addToCart = (item) => {
         price: item.price,
         discount: item.discount || false,
         discountPrice: item.discountPrice || 0,
+        discountAmount: item.price - item.discountPrice,
         quantity: 1,
         ticketQuantity: item.ticketQuantity
       };
@@ -407,7 +408,7 @@ export const checkout = (navigate, guest=null) => {
       const ticketIds = cartItems.map(item => item.ticketId);
       const eventIds = cartItems.map(item => item.eventId);
       const price = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-      const discountPrice = cartItems.reduce((sum, item) => sum + item.discountPrice, 0);
+      const discountPrice = cartItems.reduce((sum, item) => sum + item.discountAmount, 0);
       const { cartId, total } = cart
       const userEmail = user.email
       const userId = user._id
